@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "405246863032",
+    "firebase_url": "https://rnwebmobiledesktop.firebaseio.com",
+    "project_id": "rnwebmobiledesktop",
+    "storage_bucket": "rnwebmobiledesktop.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:405246863032:android:7ef454b30efc94ec58364d",
+        "android_client_info": {
+          "package_name": "com.rnwebmobiledesktop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "405246863032-8irr4k9tgi843qvcpntmvrishorgqobn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsW86SwJmgyAKHjk7bjaOqBw2JLKxq2p0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "405246863032-8irr4k9tgi843qvcpntmvrishorgqobn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

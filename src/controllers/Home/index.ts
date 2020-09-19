@@ -11,8 +11,6 @@ import { addProduit } from '../../services/redux/produits/actions';
 
 import {StackParams} from '../../presentations/navigation';
 
-const { v4: uuidv4 } = require('uuid');
-
 type NavigationProps = StackNavigationProp<StackParams, 'Home'>;
 
 interface AppState extends Produit {
@@ -43,7 +41,7 @@ export default class HomeController extends React.Component<IProps> {
 	addProduit = () => {
 		const { name, code } = this.state;
 		if(name && code) {
-			this.props.addProduit({ name, code, id: uuidv4().toString() });
+			this.props.addProduit({ name, code, id: code + Math.round(20) });
 			this.props.navigation.navigate('Produits');
 		}
 	}

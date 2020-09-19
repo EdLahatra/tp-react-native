@@ -16,7 +16,7 @@ class ProduitsScreen extends ProduitsController {
         <FlatList
           data={list || []}
           renderItem={renderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item.id + Math.round(20) }
         />
       </View>
     </Container>

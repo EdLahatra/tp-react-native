@@ -9,9 +9,11 @@ const initialState: ProduitsState = {
 export const produitsReducer = (state = initialState, action: ProduitsActionTypes): ProduitsState => {
 	switch (action.type) {
 		case GET_PRODUITS:
+			const ids = state.list.map(i => i.id);
+			const newProduit = action.payload.filter(({ id }) => !ids.includes(id))
 			return {
 				...state,
-				list: action.payload,
+				list: [...state.list, ...newProduit],
 			};
 		case ADD_PRODUIT:
 			return {

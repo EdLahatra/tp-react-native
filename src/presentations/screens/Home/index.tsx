@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, SafeAreaView, ScrollView, Button, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, SafeAreaView, ScrollView, Button, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import BarcodeMask from 'react-native-barcode-mask';
 import styles from './styles';
@@ -19,22 +19,36 @@ class ScanScreen extends HomeController {
     return (
       <ScrollView>
         <SafeAreaView style={styles.container}>
-          <View style={styles.body}>
-            <View style={styles.cameraView}>
+          <View
+            style={{
+              justifyContent: 'center',
+              flexDirection: 'column',
+              flexWrap: 'nowrap',
+              flex: 1,
+            }}>
+            <View
+              style={{
+                height: Dimensions.get('window').height / 2,
+                width: Dimensions.get('window').width - 100,
+                alignItems: 'center',
+                marginTop: -30,
+                marginLeft: 50,
+                marginBottom: 30,
+              }}>
               <RNCamera
                 ref={(ref) => {
                   this.camera = ref;
                 }}
                 defaultTouchToFocus
-                // flashMode={RNCamera.Constants.FlashMode.torch}
+                flashMode={RNCamera.Constants.FlashMode[flash ? 'torch' : 'off']}
                 mirrorImage={false}
-                onBarCodeRead={async (scanResult) => await this.onBarCodeRead(scanResult)}
+                onBarCodeRead={async (scanResult) => this.onBarCodeRead(scanResult)}
                 onFacesDetected={() => { }}
                 onFocusChanged={() => { }}
                 onZoomChanged={() => { }}
                 style={styles.preview}
                 type={RNCamera.Constants.Type.back}
-                // defaultVideoQuality={RNCamera.Constants.VideoQuality['720p']}
+                defaultVideoQuality={RNCamera.Constants.VideoQuality['1080p']}
               >
                 <BarcodeMask />
               </RNCamera>
@@ -55,16 +69,21 @@ class ScanScreen extends HomeController {
                 placeholder={'Produit name'}
                 style={styles.input}
               />
+              <TextInput
+                value={this.state.code}
+                // onChangeText={(name) => this.setState({ name })}
+                placeholder={'Produit code Bar'}
+                style={styles.input}
+                editable={true}
+              />
             </View>
             <View style={{ padding: 20 }}>
               <Button
-                testID="Scan Produits"
-                title="Scan Produits"
-                onPress={() => {}}
+                title="Add Produits"
+                onPress={this.addProduit}
               />
               <View style={{ height: 10 }} />
               <Button
-                testID="again"
                 title="Go to Produits"
                 onPress={() => this.props.navigation.navigate('Produits')}
               />

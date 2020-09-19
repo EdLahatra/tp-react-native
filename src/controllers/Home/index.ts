@@ -11,6 +11,8 @@ import { addProduit } from '../../services/redux/produits/actions';
 
 import {StackParams} from '../../presentations/navigation';
 
+const { v4: uuidv4 } = require('uuid');
+
 type NavigationProps = StackNavigationProp<StackParams, 'Home'>;
 
 interface AppState extends Produit {
@@ -18,7 +20,7 @@ interface AppState extends Produit {
 }
 
 interface IProps extends Produit {
-	addProduit: () => Promise<void>;
+	addProduit: (produit: Produit) => Promise<void>;
 	produit: Produit,
 	navigation: NavigationProps;
 }
@@ -26,14 +28,25 @@ interface IProps extends Produit {
 export default class HomeController extends React.Component<IProps> {
 	readonly state: AppState = {
 		name: '',
-		code: 0,
+		code: '',
 		id: '',
 		flash: false,
 	};
 
   onBarCodeRead = (scanResult: any) => {
-    console.log({ scanResult });
-  }
+		console.log({ scanResult });
+		if(scanResult && scanResult.data) {
+			this.setState({ code: scanResult.data });
+		}
+	}
+	
+	addProduit = () => {
+		const { name, code } = this.state;
+		if(name && code) {
+			this.props.addProduit({ name, code, id: uuidv4().toString() });
+			this.props.navigation.navigate('Produits');
+		}
+	}
 }
 
 const mapStateToProps = (state: RootState) => ({

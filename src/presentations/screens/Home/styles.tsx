@@ -29,7 +29,7 @@ export default {
     width: Dimensions.get('window').width - 100,
   },
   input: {
-    padding: 20,
+    padding: 5,
     borderBottomColor: 'black',
     borderWidth: 1,
     borderRadius: 10,

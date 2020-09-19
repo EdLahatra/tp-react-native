@@ -1,7 +1,7 @@
 export interface Produit {
 	id: string
 	name: string
-	code: number
+	code: string
 };
   
 export interface ProduitsState {

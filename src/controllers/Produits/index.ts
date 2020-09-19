@@ -15,7 +15,7 @@ interface IProps extends Produit {
 export default class ProduitsController extends React.Component<IProps> {
 	readonly state: Produit = {
 		name: '',
-		code: 0,
+		code: '',
 		id: '',
 	};
 	

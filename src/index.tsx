@@ -1,17 +1,21 @@
 import React from 'react';
-import {AppRegistry, Platform} from 'react-native';
+import {AppRegistry} from 'react-native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
+import { DatabaseProvider } from './context/DatabaseContext';
+
 import { store, persistor } from './services/redux/store';
-import {Navigation} from './presentations/navigation';
+import {AppNavigation} from './presentations/navigation';
 import {name as appName} from '../app.json';
 
 export function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <Navigation />
+        <DatabaseProvider>
+          <AppNavigation />
+        </DatabaseProvider>
       </PersistGate>
     </Provider>
   );

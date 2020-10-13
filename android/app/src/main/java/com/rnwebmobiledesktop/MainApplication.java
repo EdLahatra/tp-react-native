@@ -2,8 +2,11 @@ package com.rnwebmobiledesktop;
 
 import android.app.Application;
 import android.content.Context;
+
+import com.facebook.react.BuildConfig;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.darryncampbell.rndatawedgeintents.RNDataWedgeIntentsPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -11,13 +14,16 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+// import org.devio.rn.splashscreen.SplashScreenReactPackage;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
         @Override
         public boolean getUseDeveloperSupport() {
-          return BuildConfig.DEBUG;
+          // return BuildConfig.DEBUG;
+          return true;
         }
 
         @Override
@@ -26,6 +32,8 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
+            //packages.add(new RNDataWedgeIntentsPackage());
+          // packages.add(new SplashScreenReactPackage());
           return packages;
         }
 
@@ -44,6 +52,8 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+      long size = 1000L * 1024L * 1024L; // 50 MB
+      com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 

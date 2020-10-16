@@ -5,7 +5,7 @@ import { FlatGrid } from 'react-native-super-grid';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface Props {
-    goto:(event: GestureResponderEvent) => void;
+    goto:() => void;
   }
   
   interface State {
@@ -61,7 +61,7 @@ export class Keyboard extends React.Component<Props,State> {
     goToHome(pwd:string){
         //check dans la base
         if(pwd == '123'){
-            this.props.goto;
+            this.props.goto();
         }else{
             this.setState({issuccess:false});
         }

@@ -5,7 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 
 import RNFS from 'react-native-fs';
 
-import {Home, Produits,Login,Password,Acceuil,Encaissement} from '../screens';
+import {Home, Produits,Login,Password,Acceuil,Encaissement, Client, FicheClient, HistoriqueTicket} from '../screens';
 import TpeScreen from '../screens/Tpe';
 import { Keyboard } from '../components/Keyboard';
 
@@ -14,6 +14,8 @@ import { AppState, StyleSheet, SafeAreaView, AppStateStatus } from 'react-native
 import { synchroOneToOne, getFileToString } from '../../services/utils';
 
 import { useMetiersApp } from '../../services/metiers';
+
+// const CryptoJS = require("crypto-js");
 
 const newLine = /\r?\n/;
 const defaultFieldDelimiter = ';';
@@ -64,6 +66,9 @@ export const AppNavigation: React.FunctionComponent = function() {
     // const where = `WHERE prenom LIKE '%${'Ben'}%' OR nom LIKE '%${'Ben'}%'`;
     // const list = await selectTable('Utilisateurs', [], 1, where);
     // console.log({ list });
+
+    // console.log('===============++>')
+    // console.log(CryptoJS.HmacSHA1("Message", "shpt"));
 
     const last = await getInsertLastFileDown();
     console.log({ last });
@@ -169,6 +174,9 @@ export type StackParams = {
   Acceuil: undefined;
   Keyboard: undefined;
   Encaissement: undefined;
+  Client: undefined;
+  FicheClient: undefined;
+  HistoriqueTicket: undefined;
 };
 
 const Stack = createStackNavigator<StackParams>();
@@ -185,6 +193,9 @@ export function Navigation() {
         <Stack.Screen name='Acceuil' component={Acceuil} />
         <Stack.Screen name='Keyboard' component={Keyboard} />
         <Stack.Screen name='Encaissement' component={Encaissement} />
+        <Stack.Screen name="Client" component={Client} />
+        <Stack.Screen name="FicheClient" component={FicheClient} />
+        <Stack.Screen name="HistoriqueTicket" component={HistoriqueTicket} />
       </Stack.Navigator>
     </NavigationContainer>
   );

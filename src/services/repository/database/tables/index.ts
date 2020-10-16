@@ -1,6 +1,7 @@
 export default {
   Clients: `
   CREATE TABLE IF NOT EXISTS Clients(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [id_client] [varchar](17) NOT NULL,
     [nom] [nvarchar](60) NOT NULL,
     [prenom] [nvarchar](60) NOT NULL,
@@ -59,12 +60,14 @@ export default {
     [sexe_enfant2] [char](1) NULL,
     [sexe_enfant3] [char](1) NULL,
     [sexe_enfant4] [char](1) NULL,
-    [sexe] [char](1) NULL
+    [sexe] [char](1) NULL,
+    [synchro_up] [bit] NULL
   );
   `,
 
   Articles: `
   CREATE TABLE IF NOT EXISTS Articles(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [infos_caisse] [varchar](1000) NULL,
     [a_horo_modification] [datetime] NOT NULL,
     [d_actif] [bit] NOT NULL,
@@ -90,6 +93,7 @@ export default {
 
   ArticlesCodesBarres: `
   CREATE TABLE IF NOT EXISTS ArticlesCodesBarres(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [code_barre] [varchar](45) NULL,
     [article_code_article] [varchar](45) NULL
   );
@@ -97,6 +101,7 @@ export default {
 
   Magasins: `
   CREATE TABLE IF NOT EXISTS Magasins(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [code_magasin_franchiseur] [varchar](5) NULL,
     [code_magasin_interne] [varchar](8) NULL,
     [designation] [varchar](100) NULL,
@@ -111,6 +116,7 @@ export default {
 
   Messages: `
   CREATE TABLE IF NOT EXISTS Messages(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [usr_source] [varchar](30) NULL,
     [source] [varchar](100) NULL,
     [usr_destination] [varchar](30) NULL,
@@ -124,6 +130,7 @@ export default {
 
   ModesReglements: `
   CREATE TABLE IF NOT EXISTS ModesReglements(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [code_mode_reglement] [nvarchar](3) NULL,
     [libelle_mode_reglement] [nvarchar](20) NULL,
     [autorise_rendu_monnaie] [bit] NULL,
@@ -141,6 +148,7 @@ export default {
 
   MotifsGeneriques: `
   CREATE TABLE IF NOT EXISTS MotifsGenerique(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [date_modif] [varchar](5) NULL,
     [id_motif_generique] [varchar](5) NULL,
     [libelle_motif] [varchar](5) NULL,
@@ -150,6 +158,7 @@ export default {
 
   MotifsRemises: `
   CREATE TABLE IF NOT EXISTS MotifsRemises(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [id_motif_remise] [int] IDENTITY(1,1) NULL,
     [libelle_impression] [nvarchar](20) NULL,
     [libelle_complet] [nvarchar](50) NULL,
@@ -161,6 +170,7 @@ export default {
 
   Parametres: `
   CREATE TABLE IF NOT EXISTS Parametres(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [Caisse] [nvarchar](50) NULL,
     [Variable] [nvarchar](50) NULL,
     [Enseigne] [nvarchar](255) NULL,
@@ -170,6 +180,7 @@ export default {
 
   PromosCoupons: `
   CREATE TABLE IF NOT EXISTS PromosCoupons(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [code_coupon] [varchar](19) NOT NULL,
     [date_creation] [datetime] NOT NULL,
     [user_creation] [varchar](30) NOT NULL,
@@ -185,6 +196,7 @@ export default {
 
   Promos: `
   CREATE TABLE IF NOT EXISTS Promos(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [id_promo] [int] IDENTITY(1,1) NULL,
     [code_magasin] [varchar](5) NULL,
     [date_debut] [datetime] NULL,
@@ -218,6 +230,7 @@ export default {
 
   ModesReglementsVerifs: `
   CREATE TABLE IF NOT EXISTS ModesReglementsVerifs(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [type_carte] [varchar](5) NULL,
     [id_carte] [varchar](50) NULL,
     [date_modif] [datetime] NULL
@@ -226,6 +239,7 @@ export default {
   
   LastFileDown: `
   CREATE TABLE IF NOT EXISTS LastFileDown(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [name] [varchar](50) NULL,
     [size] [int] NULL,
     [date] [int] NULL
@@ -234,6 +248,7 @@ export default {
 
   Utilisateurs: `
   CREATE TABLE IF NOT EXISTS Utilisateurs(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [derniere_connexion] [datetime] NULL,
     [date_modif] [datetime] NULL,
     [date_creation] [datetime] NULL,
@@ -261,6 +276,296 @@ export default {
     [droit_rembourse_esp] [nvarchar](1) NOT NULL,
     [droit_ouverture_tiroir] [nvarchar](1) NOT NULL
   );
+  `,
+  
+  Tickets: `
+  CREATE TABLE IF NOT EXISTS Tickets(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [numero_ticket] [varchar](16) NULL,
+    [statut] [bit] NULL,
+    [user_creation] [varchar](30) NULL,
+    [id_client] [varchar](17) NULL,
+    [user_annulation] [varchar](30) NULL,
+    [motif_annulation] [nvarchar](50) NULL,
+    [date_debut] [datetime] NULL,
+    [date_fin] [datetime] NULL,
+    [id_cloture] [varchar](17) NULL,
+    [vendeurs] [varchar](92) NULL,
+    [synchro_up] [bit] NULL
+  )
+`,
+
+  TicketsDetail: `
+  CREATE TABLE IF NOT EXISTS TicketsDetail(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [numero_ticket] [varchar](16) NULL,
+    [numero_ligne] [tinyint] NULL,
+    [code_article] [varchar](45) NULL,
+    [statut] [bit] NULL,
+    [user_creation] [nvarchar](30) NULL,
+    [date_creation] [datetime] NULL,
+    [user_annulation] [nvarchar](30) NULL,
+    [date_annulation] [datetime] NULL,
+    [motif_annulation] [nvarchar](50) NULL,
+    [quantite] [smallint] NULL,
+    [motif_remise] [nvarchar](30) NULL,
+    [motif_retour] [nvarchar](50) NULL,
+    [complement_designation] [nvarchar](30) NULL,
+    [user_retour] [nvarchar](30) NULL,
+    [prix_base_unitaire_ttc] [money] NULL,
+    [remise_totale_ttc] [money] NULL,
+    [tva_totale] [money] NULL,
+    [prix_total_ttc] [money] NULL,
+    [motif_remise_complet] [nvarchar](50) NULL,
+    [envoye] [bit] NULL,
+    [id_promo] [int] NULL,
+    [synchro_up] [bit] NULL
+    )
+`,
+
+  TicketsPaiements: `
+  CREATE TABLE IF NOT EXISTS TicketsPaiements(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [numero_ticket] [varchar](16) NULL,
+    [numero_ligne] [tinyint] NULL,
+    [mode_paiement] [varchar](3) NULL,
+    [montant_paiement] [money] NULL,
+    [info_paiement] [nvarchar](50) NULL,
+    [encaisse] [bit] NULL,
+    [user_annulation] [varchar](30) NULL,
+    [date_annulation] [datetime] NULL,
+    [motif_annulation] [nvarchar](50) NULL,
+    [synchro_up] [bit] NULL
+    )
+  `,
+
+  Clotures: `
+  CREATE TABLE IF NOT EXISTS Clotures(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [id_cloture] [varchar](17) NULL,
+    [code_mag] [varchar](5) NULL,
+    [caisse] [varchar](4) NULL,
+    [date_ouverture] [datetime] NULL,
+    [date_fin_ouverture] [datetime] NULL,
+    [usr_ouverture] [varchar](30) NULL,
+    [ouverture_coupures_500] [smallint] NULL,
+    [ouverture_coupures_200] [smallint] NULL,
+    [ouverture_coupures_100] [smallint] NULL,
+    [ouverture_coupures_50] [smallint] NULL,
+    [ouverture_coupures_20] [smallint] NULL,
+    [ouverture_coupures_10] [smallint] NULL,
+    [ouverture_coupures_5] [smallint] NULL,
+    [ouverture_coupures_2] [smallint] NULL,
+    [ouverture_coupures_1] [smallint] NULL,
+    [ouverture_coupures_050] [smallint] NULL,
+    [ouverture_coupures_020] [smallint] NULL,
+    [ouverture_coupures_010] [smallint] NULL,
+    [ouverture_coupures_005] [smallint] NULL,
+    [ouverture_coupures_002] [smallint] NULL,
+    [ouverture_coupures_001] [smallint] NULL,
+    [date_fermeture] [datetime] NULL,
+    [date_fin_fermeture] [datetime] NULL,
+    [usr_fermeture] [varchar](30) NULL,
+    [fermeture_coupures_500] [smallint] NULL,
+    [fermeture_coupures_200] [smallint] NULL,
+    [fermeture_coupures_100] [smallint] NULL,
+    [fermeture_coupures_50] [smallint] NULL,
+    [fermeture_coupures_20] [smallint] NULL,
+    [fermeture_coupures_10] [smallint] NULL,
+    [fermeture_coupures_5] [smallint] NULL,
+    [fermeture_coupures_2] [smallint] NULL,
+    [fermeture_coupures_1] [smallint] NULL,
+    [fermeture_coupures_050] [smallint] NULL,
+    [fermeture_coupures_020] [smallint] NULL,
+    [fermeture_coupures_010] [smallint] NULL,
+    [fermeture_coupures_005] [smallint] NULL,
+    [fermeture_coupures_002] [smallint] NULL,
+    [fermeture_coupures_001] [smallint] NULL,
+    [mnt_1_reel] [money] NULL,
+    [nb_1_reel] [smallint] NULL,
+    [mnt_1_theo] [money] NULL,
+    [nb_1_theo] [smallint] NULL,
+    [mnt_2_reel] [money] NULL,
+    [nb_2_reel] [smallint] NULL,
+    [mnt_2_theo] [money] NULL,
+    [nb_2_theo] [smallint] NULL,
+    [mnt_3_reel] [money] NULL,
+    [nb_3_reel] [smallint] NULL,
+    [mnt_3_theo] [money] NULL,
+    [nb_3_theo] [smallint] NULL,
+    [mnt_4_reel] [money] NULL,
+    [nb_4_reel] [smallint] NULL,
+    [mnt_4_theo] [money] NULL,
+    [nb_4_theo] [smallint] NULL,
+    [mnt_5_reel] [money] NULL,
+    [nb_5_reel] [smallint] NULL,
+    [mnt_5_theo] [money] NULL,
+    [nb_5_theo] [smallint] NULL,
+    [mnt_6_reel] [money] NULL,
+    [nb_6_reel] [smallint] NULL,
+    [mnt_6_theo] [money] NULL,
+    [nb_6_theo] [smallint] NULL,
+    [mnt_7_reel] [money] NULL,
+    [nb_7_reel] [smallint] NULL,
+    [mnt_7_theo] [money] NULL,
+    [nb_7_theo] [smallint] NULL,
+    [mnt_8_reel] [money] NULL,
+    [nb_8_reel] [smallint] NULL,
+    [mnt_8_theo] [money] NULL,
+    [nb_8_theo] [smallint] NULL,
+    [nb_ticket_valide] [smallint] NULL,
+    [nb_ticket_non_valide] [smallint] NULL,
+    [nb_article_valide] [smallint] NULL,
+    [nb_article_non_valide] [smallint] NULL,
+    [commentaire] [nvarchar](250) NULL,
+    [no_bordereau1] [varchar](13) NULL,
+    [no_bordereau2] [varchar](13) NULL,
+    [no_bordereau3] [varchar](13) NULL,
+    [no_bordereau4] [varchar](13) NULL,
+    [no_bordereau5] [varchar](13) NULL,
+    [no_bordereau6] [varchar](13) NULL,
+    [no_bordereau7] [varchar](13) NULL,
+    [no_bordereau8] [varchar](13) NULL,
+    [responsable_ecart1] [varchar](30) NULL,
+    [responsable_ecart2] [varchar](30) NULL,
+    [responsable_ecart3] [varchar](30) NULL,
+    [synchro_up] [bit] NULL
+    )
+  `,
+
+  CloturesAnnuelle: `
+  CREATE TABLE IF NOT EXISTS CloturesAnnuelle(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [annee] [smallint] NULL,
+    [code_mag] [varchar](5) NULL,
+    [caisse] [varchar](4) NULL,
+    [code_mode_reglement] [varchar](3) NULL,
+    [nb_ticket_valide] [int] NULL,
+    [nb_ticket_non_valide] [int] NULL,
+    [nb_article_valide] [int] NULL,
+    [nb_article_non_valide] [int] NULL,
+    [ca_total] [money] NULL,
+    [num_ticket_debut] [varchar](12) NULL,
+    [num_ticket_fin] [varchar](12) NULL,
+    [integrite_ok] [bit] NULL,
+    [synchro_up] [bit] NULL
+  )
+`,
+
+  CloturesDetailsPaiement: `
+  CREATE TABLE IF NOT EXISTS CloturesDetailsPaiement(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [id_detail_paiement] [int] IDENTITY(1,1) NULL,
+    [id_cloture] [varchar](17) NULL,
+    [mode_paiement] [varchar](3) NULL,
+    [numero_moyen_paiement] [varchar](50) NULL,
+    [info] [varchar](50) NULL,
+    [montant] [money] NULL,
+    [synchro_up] [bit] NULL
+  )
+`,
+
+  CloturesMensuelle: `
+  CREATE TABLE IF NOT EXISTS CloturesMensuelle(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [annee] [smallint] NULL,
+    [mois] [tinyint] NULL,
+    [code_mag] [varchar](5) NULL,
+    [caisse] [varchar](4) NULL,
+    [code_mode_reglement] [nvarchar](3) NULL,
+    [nb_ticket_valide] [int] NULL,
+    [nb_ticket_non_valide] [int] NULL,
+    [nb_article_valide] [int] NULL,
+    [nb_article_non_valide] [int] NULL,
+    [ca_total] [money] NULL,
+    [num_ticket_debut] [varchar](12) NULL,
+    [num_ticket_fin] [varchar](12) NULL,
+    [synchro_up] [bit] NULL
+  )
+  `,
+
+  ControlesCaisse: `
+  CREATE TABLE IF NOT EXISTS ControlesCaisse(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [id_cloture] [varchar](17) NULL,
+    [user_sortant] [varchar](30) NULL,
+    [user_entrant] [varchar](30) NULL,
+    [date_debut] [datetime] NULL,
+    [date_fin] [datetime] NULL,
+    [mnt_1_reel] [money] NULL,
+    [mnt_1_theo] [money] NULL,
+    [nb_1_reel] [smallint] NULL,
+    [nb_1_theo] [smallint] NULL,
+    [mnt_2_reel] [money] NULL,
+    [mnt_2_theo] [money] NULL,
+    [nb_2_reel] [smallint] NULL,
+    [nb_2_theo] [smallint] NULL,
+    [mnt_3_reel] [money] NULL,
+    [mnt_3_theo] [money] NULL,
+    [nb_3_reel] [smallint] NULL,
+    [nb_3_theo] [smallint] NULL,
+    [mnt_4_reel] [money] NULL,
+    [mnt_4_theo] [money] NULL,
+    [nb_4_reel] [smallint] NULL,
+    [nb_4_theo] [smallint] NULL,
+    [mnt_5_reel] [money] NULL,
+    [mnt_5_theo] [money] NULL,
+    [nb_5_reel] [smallint] NULL,
+    [nb_5_theo] [smallint] NULL,
+    [mnt_6_reel] [money] NULL,
+    [mnt_6_theo] [money] NULL,
+    [nb_6_reel] [smallint] NULL,
+    [nb_6_theo] [smallint] NULL,
+    [mnt_7_reel] [money] NULL,
+    [mnt_7_theo] [money] NULL,
+    [nb_7_reel] [smallint] NULL,
+    [nb_7_theo] [smallint] NULL,
+    [mnt_8_reel] [money] NULL,
+    [mnt_8_theo] [money] NULL,
+    [nb_8_reel] [smallint] NULL,
+    [nb_8_theo] [smallint] NULL,
+    [ecart] [bit] NOT NULL,
+    [synchro_up] [bit] NULL
+  )
+  `,
+
+  Pointages: `
+  CREATE TABLE IF NOT EXISTS Pointages(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [nom_user] [nvarchar](30) NULL,
+    [date] [datetime] NULL,
+    [lieu] [nvarchar](5) NULL,
+    [type_mouvement] [nvarchar](3) NULL,
+    [synchro_up] [bit] NULL
+  )
+`,
+
+  DepotFonds: `
+  CREATE TABLE IF NOT EXISTS DepotFonds(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [id_depot] [varchar](17) NULL,
+    [coupures_500] [smallint] NULL,
+    [coupures_200] [smallint] NULL,
+    [coupures_100] [smallint] NULL,
+    [coupures_50] [smallint] NULL,
+    [coupures_20] [smallint] NULL,
+    [coupures_10] [smallint] NULL,
+    [coupures_5] [smallint] NULL,
+    [coupures_2] [smallint] NULL,
+    [coupures_1] [smallint] NULL,
+    [coupures_050] [smallint] NULL,
+    [coupures_020] [smallint] NULL,
+    [coupures_010] [smallint] NULL,
+    [coupures_005] [smallint] NULL,
+    [coupures_002] [smallint] NULL,
+    [coupures_001] [smallint] NULL,
+    [usr_depot] [varchar](30) NULL,
+    [date_depot] [datetime] NULL,
+    [caisse_depot] [varchar](10) NULL,
+    [no_bordereau] [varchar](13) NULL,
+    [id_cloture] [varchar](17) NULL,
+    [synchro_up] [bit] NULL
+  )
   `,
 
 }

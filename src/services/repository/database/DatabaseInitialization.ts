@@ -14,28 +14,28 @@ export class DatabaseInitialization {
       .transaction(this.createTables)
       .then(() => {
         // Get the current database version
-        return this.getDatabaseVersion(database);
+        // return this.getDatabaseVersion(database);
       })
       .then((version) => {
-        dbVersion = version;
-        console.log("Current database version is: " + dbVersion);
+        // dbVersion = version;
+        // console.log("Current database version is: " + dbVersion);
 
-        // Perform DB updates based on this version
+        // // Perform DB updates based on this version
 
-        // This is included as an example of how you make database schema changes once the app has been shipped
-        if (dbVersion < 1) {
-          // Uncomment the next line, and the referenced function below, to enable this
-          // return database.transaction(this.preVersion1Inserts);
-        }
-        // otherwise,
+        // // This is included as an example of how you make database schema changes once the app has been shipped
+        // if (dbVersion < 1) {
+        //   // Uncomment the next line, and the referenced function below, to enable this
+        //   // return database.transaction(this.preVersion1Inserts);
+        // }
+        // // otherwise,
         return;
       })
       .then(() => {
-        if (dbVersion < 2) {
-          // Uncomment the next line, and the referenced function below, to enable this
-          // return database.transaction(this.preVersion2Inserts);
-        }
-        // otherwise,
+        // if (dbVersion < 2) {
+        //   // Uncomment the next line, and the referenced function below, to enable this
+        //   // return database.transaction(this.preVersion2Inserts);
+        // }
+        // // otherwise,
         return;
       });
   }
@@ -45,7 +45,7 @@ export class DatabaseInitialization {
     console.log('=============================> dropAllTables')
     // DANGER! For dev only
     const dropAllTables = false;
-    if (dropAllTables) {
+    // if (dropAllTables) {
       // transaction.executeSql("DROP TABLE IF EXISTS Utilisateurs;");
       // transaction.executeSql("DROP TABLE IF EXISTS LastFileDown;");
       // transaction.executeSql("DROP TABLE IF EXISTS Version;");
@@ -57,7 +57,7 @@ export class DatabaseInitialization {
       // transaction.executeSql("DROP TABLE IF EXISTS Magasins;");
       // transaction.executeSql("DROP TABLE IF EXISTS Messages;");
       // transaction.executeSql("DROP TABLE IF EXISTS Parametres;");
-    }
+    // }
 
     Object.values(Tables).map(table => transaction.executeSql(table));
 

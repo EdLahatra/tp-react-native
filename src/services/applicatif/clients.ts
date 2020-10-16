@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 
 import { useMetiersRequeteSQL } from '../metiers/requeteSQL';
 import { tables } from '../utils';
-import { RequestSelectDTO } from '../dto/request';
+import { RequestDTO } from '../dto/request';
 
-const table = tables.Clients;
+const table = tables.Clients.name;
 
 export function useAppClients() {
   
@@ -25,7 +25,7 @@ export function useAppClients() {
       limit: 20,
     };
 
-    const request = new RequestSelectDTO(data).generateRequestSelect();
+    const request = new RequestDTO(data).generateRequestSelect();
 
     const res = await selectTable(request);
     console.log({ res });

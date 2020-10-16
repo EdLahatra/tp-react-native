@@ -25,9 +25,53 @@ export const fileN = {
   reglements_verifs: 'reglements_verifs.csv',
 };
 
+export const tables_synchro_up = {
+  CloturesMensuelle: {
+    name: 'CloturesMensuelle',
+  },
+  Clients: {
+    name: 'Clients',
+  },
+  ControlesCaisse: {
+    name: 'ControlesCaisse',
+  },
+  CloturesAnnuelle: {
+    name: 'CloturesAnnuelle',
+  },
+  Pointages: {
+    name: 'Pointages',
+  },
+  CloturesDetailsPaiement: {
+    name: 'CloturesDetailsPaiement',
+    columns: [
+      'numero_ticket',
+      'statut',
+      'user_creation',
+      'id_clientvarchar',
+      'user_annulation',
+      'motif_annulation',
+      'date_debut',
+      'date_fin',
+      'id_cloture',
+      'vendeurs'
+    ],
+  },
+  Tickets: {
+    name: 'Tickets',
+  },
+  TicketsDetail: {
+    name: 'TicketsDetail',
+  },
+  TicketsPaiement: {
+    name: 'TicketsPaiement',
+  },
+};
+
 export const tables = {
-  Utilisateurs: 'Utilisateurs',
-  Clients: 'Clients',
+  Utilisateurs: {
+    name: 'Utilisateurs',
+  },
+  ...tables_synchro_up,
 };
 
 export const ckeckFile = async (file: string, path: string) => {

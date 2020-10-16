@@ -8,6 +8,11 @@ import { Produit, ProduitsState } from '../../interfaces/produits';
 import { getProduitsAction } from '../../services/redux/produits/actions';
 
 import { StackParams } from '../../presentations/navigation';
+import {
+  NavigationParams,
+  NavigationScreenProp,
+  NavigationState,
+} from 'react-navigation';
 
 type NavigationProps = StackNavigationProp<StackParams, 'Login'>;
 interface IProps extends Produit {
@@ -16,7 +21,8 @@ interface IProps extends Produit {
 }
 
 export interface Props {
-  navigation: NavigationProps;
+  //navigation: NavigationProps;
+  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
 export interface State {

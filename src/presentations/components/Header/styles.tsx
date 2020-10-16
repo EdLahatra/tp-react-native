@@ -38,6 +38,6 @@ export const styles = StyleSheet.create({
     marginStart:10,
     color: '#34B6DC'
   },
- 
+  
 
 });

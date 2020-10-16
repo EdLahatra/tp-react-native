@@ -64,39 +64,64 @@ import { useAppAuth } from '../../../services/applicatif/auth';
 //         )
 //     }
 // }
-
+export interface Utilisateur{
+    nom:string,
+    prenom:string,
+    password:string,
+}
 export const LoginScreen: React.FunctionComponent<Props> = function (props) {
   const { navigation } = props;
   const [query, setQuery] = useState('');
+  const [isHidden, setIsHidden] = useState(false);
 
-  const { getUsers } = useAppAuth();
+  const {  getUsers } = useAppAuth();
 
   // const { db } = useRealm();
-  const [films, setFilms] = useState(['Jim', 'Jimmy', 'Maliah', 'Connor', 'Col', 'Jean', 'Jolo', 'Jeeee', 'Jerrr']);
+  const [films, setFilms] = useState<Utilisateur[]>([]);
 
   useEffect(() => {
-    getUsers('J');
+    //getUsers('J');
+  
+    
+    async function setToState() {
+       
+            const val:Utilisateur[] =  await getUsers(query);
+           // const output = val.map( item => item.nom + ' ' + item.prenom );
+           // console.log('Users',val);
+            setFilms(val);
+       
+        
+    }    
+       setToState();
   }, []);
 
-  function findFilm() {
+  function findFilm(query:string) {
+      
+      console.log('Users',films);
+     
     if (query === '') {
       return [];
     }
-
     // const { films } = this.state;
     const regex = new RegExp(`${query.trim()}`, 'i');
-    return films.filter(film => film.search(regex) >= 0);
+    return films.filter(film => (film.nom.search(regex) >= 0 || film.prenom.search(regex) >= 0));
   }
-  function loggin(item: string) {
+
+  function loggin(item:any) {
     // this.setState({ query: item });
-    setQuery(item);
-    navigation.navigate('Password');
+    //setQuery(item);
+    setIsHidden(true);
+    navigation.navigate('Password',{
+        item
+    });
   }
+
   function goToScan() {
+   
     navigation.navigate('Password');
   }
 
-  const data = findFilm();
+  const data = findFilm(query);
 
   return (
 
@@ -107,11 +132,12 @@ export const LoginScreen: React.FunctionComponent<Props> = function (props) {
         <Autocomplete
           data={data}
           defaultValue={query}
+          hideResults = {isHidden}
           placeholder="Recherche..."
-          onChangeText={text => this.setState({ query: text })}
+          onChangeText={text => setQuery(text)}
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.heightItem} onPress={() => loggin(item)}>
-              <Text style={styles.itemstyle}>{item}</Text>
+              <Text style={styles.itemstyle}>{item.nom + ' '+item.prenom}</Text>
             </TouchableOpacity>
           )} />
 

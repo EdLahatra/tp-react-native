@@ -8,17 +8,22 @@ import { Produit, ProduitsState } from '../../interfaces/produits';
 import { getProduitsAction } from '../../services/redux/produits/actions';
 
 import {StackParams} from '../../presentations/navigation';
-
+import {
+  NavigationParams,
+  NavigationScreenProp,
+  NavigationState,
+} from 'react-navigation';
 type NavigationProps = StackNavigationProp<StackParams, 'Password'>;
 interface IProps extends Produit {
 	getProduits: () => Promise<void>;
 	produits: ProduitsState,
 	
 }
-interface Props {
+export interface Props {
     title?: string;
     nom?: string;
-    navigation: NavigationProps;
+    //navigation: NavigationProps;
+    navigation: NavigationScreenProp<NavigationState, NavigationParams>;
   }
   interface State {
     

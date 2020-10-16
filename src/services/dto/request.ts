@@ -13,7 +13,12 @@ const addOperatorLogique = (req: any) => {
   }, 'WHERE ');
 }
 
-export class RequestSelectDTO {
+const updatedCollumn = (columns: { [s: string]: string; }) => {
+  const setCollumn = Object.keys(columns).map((collumn) => `${collumn} = `).join('? ');
+  return setCollumn;
+}
+
+export class RequestDTO {
   table: string | undefined;
   where: string[] | undefined;
   limit: string | undefined;
@@ -21,6 +26,7 @@ export class RequestSelectDTO {
   like: boolean | undefined;
   operator: string | undefined;
   values: string[] | undefined;
+  // column: string | undefined;
 
   constructor(request: any) {
     if (request) {
@@ -30,11 +36,37 @@ export class RequestSelectDTO {
       this.query = request.query;
       this.values = request.values;
       this.where = request.where;
+      // this.column = request.column?.join();
+      // this.values = request.columns?.map(() => '?').join();
     }
   }
 
   generateRequestSelect = () => {
     const req = `SELECT * FROM ${this.table} ${addOperatorLogique(this)} LIMIT ${this.limit || 10};`;
+    console.log({ req });
+    return req;
+  }
+
+  generateRequestInsert = (data: any) => {
+    const keys = Object.keys(data);
+    const column = keys.join();
+    const values = keys?.map(() => '?').join();
+    const req = `"INSERT INTO ${this.table} (${column}) VALUES (${values});"`;
+    console.log({ req });
+    return req;
+  }
+
+  generateRequestUpdate = (columns: { [s: string]: string; }) => {
+    const req = `UPDATE ${this.table} SET ${updatedCollumn(columns)};`;
+    console.log({ req });
+    return {
+      req,
+      values: Object.values(columns)
+    };
+  }
+
+  generateRequestDelete = () => {
+    const req = `DELETE FROM ${this.table} WHERE id = ?;`;
     console.log({ req });
     return req;
   }

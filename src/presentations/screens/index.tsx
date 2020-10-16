@@ -5,3 +5,6 @@ export * from './Login';
 export * from './Password';
 export * from './Acceuil';
 export * from './Encaissement';
+export * from './Client';
+export * from './FicheClient';
+export * from './HistoriqueTicket';

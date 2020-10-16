@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 
 import { useApplicatif } from './index';
 import { tables } from '../utils';
-import { RequestSelectDTO } from '../dto/request';
+import { RequestDTO } from '../dto/request';
 
-const table = tables.Utilisateurs;
+const table = tables.Utilisateurs.name;
 
 export function useAppAuth() {
 
   const { getEntity } = useApplicatif();
+  
 
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export function useAppAuth() {
     console.log({ res });
     return res;
   } 
-
+  
   return {
     getUsers,
   };

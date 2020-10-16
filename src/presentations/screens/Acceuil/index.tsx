@@ -39,6 +39,7 @@ class AcceuilScreen extends AccueilController {
                                 this.props.navigation.navigate('Encaissement');
                                 break;
                             case 1:
+                                this.props.navigation.navigate('HistoriqueTicket');
                                 break;    
                         }
                     }}>

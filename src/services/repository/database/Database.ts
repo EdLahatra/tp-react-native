@@ -8,7 +8,7 @@ import { ListItem } from "../types/ListItem";
 import { DATABASE } from "./Constants";
 import { DropboxDatabaseSync } from "../sync/dropbox/DropboxDatabaseSync";
 
-import { Counts, initialCount, requeteSelect } from '../../../interfaces/request';
+import { Counts, initialCount } from '../../../interfaces/request';
 
 const newLine = /\r?\n/;
 const defaultFieldDelimiter = ";";
@@ -46,6 +46,9 @@ export interface Database {
   insertLastFileDown(name: string, size: number, date: number): Promise<any>;
   selectLastInsertFile(): Promise<string>;
   selectTable(reqSQL: string): Promise<any[]>;
+  insertTable(reqSQL: string, values: string[]): Promise<any>;
+  updateTable(reqSQL: string, values: string[]): Promise<any>;
+  deleteTable(reqSQL: string, values: string[]): Promise<any>;
 }
 
 let databaseInstance: SQLite.SQLiteDatabase | undefined;
@@ -125,26 +128,55 @@ async function selectTable(sqlRequest: string): Promise<any[]> {
   });
 }
 
-// async function insertSynchroOneToOne(requete, values) {
-//   const db = await getDatabase();
-//   return new Promise((resolve, reject) => {
-//     db.transaction(tx => {
-//       tx.executeSql('SELECT * FROM users;', [], (tx, results) => {
-//         const { rows } = results;
-//         let users = [];
+async function insertTable(request: string, values: string[]) {
+  const db = await getDatabase();
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(request, values, (tx, results) => {
+        // const { rows } = results;
+        // let users = [];
 
-//         for (let i = 0; i < rows.length; i++) {
-//           users.push({
-//             ...rows.item(i),
-//           });
-//         }
+        // for (let i = 0; i < rows.length; i++) {
+        //   users.push({
+        //     ...rows.item(i),
+        //   });
+        // }
+        console.log({ results });
 
-//         resolve(users);
+        resolve(results);
 
-//       });
-//     });
-//   });
-// }
+      });
+    });
+  });
+}
+
+async function deleteTable(request: string, values: string[]) {
+  const db = await getDatabase();
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(request, values, (tx, results) => {
+        console.log({ results });
+
+        resolve(results);
+
+      });
+    });
+  });
+}
+
+async function updateTable(request: string, values: string[]) {
+  const db = await getDatabase();
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(request, values, (tx, results) => {
+        console.log({ results });
+
+        resolve(results);
+
+      });
+    });
+  });
+}
 
 async function synchroDown(data: any, cb: Function): Promise<any> {
   const { dataString, trasfomToObj } = data;
@@ -425,8 +457,9 @@ async function open(): Promise<SQLite.SQLiteDatabase> {
   // Otherwise, create a new instance
   const db = await SQLite.openDatabase({
     name: DATABASE.FILE_NAME,
-    location: "Documents",
-    createFromLocation,
+    location: 'default',
+    // location: "Documents",
+    // createFromLocation,
   });
   console.log("[db] Database open!");
 
@@ -481,4 +514,7 @@ export const sqliteDatabase: Database = {
   insertLastFileDown,
   selectLastInsertFile,
   selectTable,
+  insertTable,
+  updateTable,
+  deleteTable,
 };

@@ -12,7 +12,8 @@ export const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems:'stretch',
         padding:10,
-       
+        backgroundColor:'#FFFFFF',
+       marginBottom:70
       },
       linearheader:{
         flexDirection: 'row',
@@ -21,7 +22,7 @@ export const styles = StyleSheet.create({
       linearclientheader:{
         flexDirection: 'column',
         
-        height:120,
+        height:70,
         
       },
       edtStyleCli:{
@@ -42,6 +43,12 @@ export const styles = StyleSheet.create({
       txtTitle:{
         fontSize:10,
         fontWeight:'bold'
+      },
+      headertxtColor:{
+        color:'#3928A6'
+      },
+      margin:{
+          marginTop:10,
       },
       txtValue:{
         fontSize:16,
@@ -79,7 +86,43 @@ export const styles = StyleSheet.create({
         height:26,
        
       },
-     
+      listContainer:{
+        flexDirection:'row',
+        marginTop:10
+
+      },
+      chp1:{
+        flex:1
+      },
+      chp2:{
+        flex:1
+      },
+    chp3:{
+        flex:1
+    },
+    chp4:{
+        flex:1
+    },
+    result:{
+      flexDirection:'row',
+      
+    },
+    article:{
+      flex:1,
+      flexDirection:'row'
+    },
+    total:{
+      flex:1,
+      flexDirection:'row'
+    },
+    remise:{
+      flex:1,
+      flexDirection:'row'
+    },
+    bottomview:{
+      height:75, position:'absolute', left:0,right:0,bottom:0,backgroundColor:'#F2F2F2',flexDirection:'row',
+      
+    }
   });
   
 

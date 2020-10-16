@@ -534,8 +534,9 @@ export const ScanScreen: React.FunctionComponent<IProps> = function (props) {
             <View style={{ height: 5 }} />
             <Button
               title="Login"
-              onPress={async () => navigation.navigate('Login')}
+              onPress={() => navigation.navigate('Login')}
             />
+            <View style={{ height: 5 }} />
           </View>
         </View>
       </SafeAreaView>

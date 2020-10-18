@@ -28,6 +28,7 @@
     "@types/uuid": "^8.3.0",
     "@ui-kitten/components": "^5.0.0",
     "axios": "^0.20.0",
+    "base-64": "^0.1.0",
     "crypto": "^1.0.1",
     "crypto-js": "^4.0.0",
     "csvtojson": "^2.0.10",
@@ -74,6 +75,7 @@
     "rn-fetch-blob": "^0.12.0",
     "shitty-qs": "^1.0.1",
     "sqlite-async": "^1.1.0",
+    "utf8": "^3.0.0",
     "uuid": "^8.3.0"
   },
   "devDependencies": {

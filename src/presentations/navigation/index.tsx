@@ -24,7 +24,7 @@ let appState: AppStateStatus;
 
 export const AppNavigation: React.FunctionComponent = function() {
   // Initialize state
-  const [isLoading, setIsLoading] = useState(false);
+  const [fileLast, setFileLast] = useState('');
   const [loadingText, setLoadingText] = useState("Loading...");
 
   const { insertSynchroOneToOne, insertLastFileDown, getInsertLastFileDown } = useMetiersApp();
@@ -38,11 +38,11 @@ export const AppNavigation: React.FunctionComponent = function() {
     appIsNowRunningInForeground();
     appState = 'active';
     // Listen for app state changes
-    AppState.addEventListener('change', handleAppStateChange);
+    // AppState.addEventListener('change', handleAppStateChange);
 
     return function() {
       // Cleanup function
-      AppState.removeEventListener('change', handleAppStateChange);
+      // AppState.removeEventListener('change', handleAppStateChange);
     };
   }, []);
 
@@ -71,6 +71,7 @@ export const AppNavigation: React.FunctionComponent = function() {
     // console.log(CryptoJS.HmacSHA1("Message", "shpt"));
 
     const last = await getInsertLastFileDown();
+    setFileLast(last);
     console.log({ last });
     await recurciveGetFile(last || '20200121_155515_hap');
     
@@ -94,14 +95,19 @@ export const AppNavigation: React.FunctionComponent = function() {
   }
 
   async function recurciveGetFile(lastFile: string) {
+    if(!lastFile) {
+      return;
+    }
+
     const { zip_name, files } = await synchroOneToOne(lastFile);
-    console.log('===================================================> ', lastFile);
+    console.log('===================================================> ', {lastFile});
     
-    if (zip_name && zip_name !== 'no update') {
-      const date = new Date().getTime() / 1000;
+    if (zip_name && zip_name !== 'no update' && zip_name !== fileLast) {
+      const date = Math.ceil(new Date().getTime() / 1000);
       // setLastFile(zip_name);
       // setFileLaste(zip_name);
       insertLastFileDown(zip_name, 2, date);
+      setFileLast(zip_name);
     }
     // console.log({ files });
     if (files && files.length > 0) {
@@ -114,8 +120,8 @@ export const AppNavigation: React.FunctionComponent = function() {
           if (lines && lines.length > 0) {
             await recurciveInsert(transform, lines);
           }
-          await RNFS.unlink(path);
-          // console.log({ fileString }); 
+          const unlink = await RNFS.unlink(path);
+          console.log({ unlink });
         }
         // const dataString = await getFileToString(path);
       }

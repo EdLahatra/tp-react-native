@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
-import { useMetiersRequeteSQL } from '../metiers/requeteSQL';
 import { tables } from '../utils';
-import { RequestDTO } from '../dto/request';
+import { useMetiersTickets } from '../metiers/tickets';
+import { FormatData } from '../../interfaces';
 
 const { name } = tables.Tickets;
 
@@ -11,55 +11,29 @@ const initial = {
   // columns: columns,
 };
 
-export function useAppClients() {
-  
-  const { selectTable, insertTable } = useMetiersRequeteSQL();
+export function useAppTickets() {
+  const { insertTicketMetier, getTicketsMetier } = useMetiersTickets();
 
   useEffect(() => {
     // refreshListOfLists();
     // getInsertLastFileDown();
   }, []);
 
-  async function getTickets(query: string) {
-    const data = {
-      query,
-      // table: name,
-      // where: ['code', 'prenom'],
-      // like: true,
-      // operator: 'OR',
-      limit: 20,
-      ...initial,
-    };
-
-    const request = new RequestDTO(data).generateRequestSelect();
-
-    const res = await selectTable(request);
+  async function getTickets(query: number) {
+    const res = await getTicketsMetier(query);
     console.log({ res });
     return res;
   }
 
-  async function insertTicket(data: { [s: string]: string; }) {
-    // const data = {
-    //   numero_ticket: '',
-    //   statut: '',
-    //   user_creation: '',
-    //   id_clientvarchar: '',
-    //   user_annulation: '',
-    //   motif_annulation: '',
-    //   date_debut: '',
-    //   date_fin: '',
-    //   id_cloture: '',
-    //   vendeurs: '',
-    // };
-    const values = Object.values(data);
-    const request = new RequestDTO(initial).generateRequestInsert(data);
-    const newRows = await insertTable(request, values);
-    console.log({ newRows });
-    return newRows;
+  async function insertTickets(data: FormatData) {
+    // id_cloture
+    const res = await insertTicketMetier(data);
+    console.log({ res });
+    return res;
   }
 
   return {
     getTickets,
-    insertTicket,
+    insertTickets,
   };
 }

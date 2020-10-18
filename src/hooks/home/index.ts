@@ -38,7 +38,7 @@ export function useClients() {
 
   useEffect(() => {
     // refreshListOfLists();
-    selectCountClients();
+    // selectCounts();
     // getInsertLastFileDown();
   }, []);
 
@@ -164,13 +164,13 @@ export function useClients() {
     return database.getAllClients().then(setLists);
   }
 
-  async function selectCountClients() {
-    // Query all lists from the DB, then store them as state
-    return database.selectCountClients().then(setCount);
-    // const tes = await realm?.objects('Test');
-    // let array = Array.from(tes || []);
-    // console.log({ array });
-  }
+  // async function selectCounts() {
+  //   // Query all lists from the DB, then store them as state
+  //   return database.selectCounts().then(setCount);
+  //   // const tes = await realm?.objects('Test');
+  //   // let array = Array.from(tes || []);
+  //   // console.log({ array });
+  // }
 
   return {
     count,
@@ -178,7 +178,7 @@ export function useClients() {
     lastFileDB,
     createClient,
     synchroClients,
-    selectCountClients,
+    // selectCounts,
     synchroDown,
     insertTest,
     requestFlagsSychro,

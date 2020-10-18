@@ -51,7 +51,7 @@ export class RequestDTO {
     const keys = Object.keys(data);
     const column = keys.join();
     const values = keys?.map(() => '?').join();
-    const req = `"INSERT INTO ${this.table} (${column}) VALUES (${values});"`;
+    const req = `INSERT INTO ${this.table} (${column}) VALUES (${values});`;
     console.log({ req });
     return req;
   }

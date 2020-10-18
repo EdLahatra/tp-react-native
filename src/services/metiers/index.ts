@@ -1,32 +1,36 @@
 import { useState, useEffect } from 'react';
 import { useDatabase } from '../../context/DatabaseContext';
 
-import { Counts, initialCount } from '../../interfaces/request';
-
 const newLine = /\r?\n/;
 const defaultFieldDelimiter = ';';
 
 export function useMetiersApp() {
-  const [count, setCount] = useState<Counts>(initialCount);
+  const [counts, setCounts] = useState<{
+    count: any;
+    table: string;
+  }[]>([]);
   const [toObj, setToObj] = useState<Function>(() => {});
   const [flag, setFlag] = useState<boolean>(false);
-  const [lastFileDB, setLastFileDB] = useState<string>('');
+  const [lastFileName, setLastFileName] = useState<string>('');
+  const [linesInsert, setLinesInsert] = useState<number>(0);
   const [lineString, setlinesString] = useState<string[]>([]);
   const database = useDatabase();
 
   useEffect(() => {
     // refreshListOfLists();
-    selectCountClients();
-    // getInsertLastFileDown();
+    selectCounts();
+    getInsertLastFileDown();
   }, []);
 
   async function getInsertLastFileDown() {
     const last = await  database.selectLastInsertFile();
+    setLastFileName(last)
     console.log({ last });
     return last;
   }
 
   async function insertLastFileDown(name: string, size: number, date: number) {
+    setLastFileName(name)
     return await database.insertLastFileDown(name, size, date);
   }
 
@@ -74,7 +78,7 @@ export function useMetiersApp() {
     const nextSynchro = lineS.splice(0);
 
     await setlinesString(nextSynchro);
-
+    setLinesInsert(nextSynchro.length);
     if(!flag && nextSynchro && nextSynchro.length > 0){
       // console.log('nextSynchro ===================>', nextSynchro.length);
       await recursiveSynchro(false, false, cb);
@@ -85,20 +89,26 @@ export function useMetiersApp() {
     await database.synchroClients(dataString, cb);
   }
 
-  async function selectCountClients() {
-    return database.selectCountClients().then(setCount);
+  async function selectCounts() {
+    return database.selectCounts().then(setCounts);
+  }
+
+  async function ouverturesCaisseMetiers() {
+    return [];
   }
 
   return {
-    count,
-    lastFileDB,
+    linesInsert,
+    counts,
+    lastFileName,
     synchroClients,
-    selectCountClients,
+    selectCounts,
     synchroDown,
     requestFlagsSychro,
     recursiveSynchro,
     insertSynchroOneToOne,
     insertLastFileDown,
     getInsertLastFileDown,
+    ouverturesCaisseMetiers,
   };
 }

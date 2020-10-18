@@ -8,21 +8,12 @@ import { ListItem } from "../types/ListItem";
 import { DATABASE } from "./Constants";
 import { DropboxDatabaseSync } from "../sync/dropbox/DropboxDatabaseSync";
 
-import { Counts, initialCount } from '../../../interfaces/request';
+import Tables from './tables';
 
 const newLine = /\r?\n/;
 const defaultFieldDelimiter = ";";
 
 export const createFromLocation = `${RNFS.DocumentDirectoryPath}/mydbfile.sqlite`;
-
-// export interface Counts {
-//   articles: number,
-//   reglements: number,
-//   clients: number,
-//   utilisateurs: number,
-//   codebarres: number,
-//   reglements_verifs: number,
-// };
 
 export interface Database {
   // Create
@@ -41,7 +32,10 @@ export interface Database {
   getAllClients(): Promise<Client[]>;
   synchroClients(dataString: string, cb: Function): Promise<void>;
   synchroDown(data: any, cb: Function): Promise<void>;
-  selectCountClients(): Promise<Counts>;
+  selectCounts(): Promise<{
+    count: any;
+    table: string;
+  }[]>;
   insertSynchroOneToOne(reqSQL: string, values: string[]): Promise<any>;
   insertLastFileDown(name: string, size: number, date: number): Promise<any>;
   selectLastInsertFile(): Promise<string>;
@@ -49,6 +43,7 @@ export interface Database {
   insertTable(reqSQL: string, values: string[]): Promise<any>;
   updateTable(reqSQL: string, values: string[]): Promise<any>;
   deleteTable(reqSQL: string, values: string[]): Promise<any>;
+  selectOneLasteValue(table: string, columns: string[]): Promise<any>;
 }
 
 let databaseInstance: SQLite.SQLiteDatabase | undefined;
@@ -68,22 +63,13 @@ async function createList(newListTitle: string): Promise<void> {
 }
 
 async function createClient(newClient: Client): Promise<void> {
-  // const db = await getDatabase();
-  // const newC = await db.executeSql("INSERT INTO Clients (id_client,nom,prenom,telephone,user_createur,date_creation,date_modification) VALUES (?,?,?,?,?,?,?);", Object.values(newClient));
-  // console.log({ newC });
-  // return newC;
   return getDatabase()
     .then((db) => db.executeSql("INSERT INTO Clients (id_client,nom,prenom,telephone,user_createur,date_creation,date_modification) VALUES (?,?,?,?,?,?,?);", Object.values(newClient)))
     .then(([results]) => {
       const { insertId } = results;
       console.log(`[db] Added list with title: "${newClient}"! InsertId: ${insertId}`);
-
-      // Queue database upload
-      // return databaseSync.upload();
     });
 }
-
-const insertOne = (keys: string, name: string, nbValues: string) => `"INSERT INTO ${name} (${keys}) VALUES (${nbValues});")`
 
 function promiseInsertDB(db: { transaction: (arg0: (tx: { executeSql: (arg0: string, arg1: never[], arg2: (_: any, { rows }: { rows: any; }) => void) => void; }) => void, arg1: null, arg2: null) => void; }, req: string, values: never[]) {
   return new Promise((resolve, reject) => {
@@ -132,19 +118,12 @@ async function insertTable(request: string, values: string[]) {
   const db = await getDatabase();
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql(request, values, (tx, results) => {
-        // const { rows } = results;
-        // let users = [];
-
-        // for (let i = 0; i < rows.length; i++) {
-        //   users.push({
-        //     ...rows.item(i),
-        //   });
-        // }
-        console.log({ results });
-
-        resolve(results);
-
+      tx.executeSql(request, values, (_tx, results) => {
+        if(results && results.insertId) {
+          resolve(results.insertId);
+        } else {
+          reject(0);
+        }
       });
     });
   });
@@ -183,16 +162,6 @@ async function synchroDown(data: any, cb: Function): Promise<any> {
   const lines = dataString.split(newLine);
   console.log({ lines: lines.length });
   const db = await getDatabase();
-
-  // await lines.forEach(async (line: string) => {
-  //   let currentLine = line.split(defaultFieldDelimiter);
-  //   let toObject = trasfomToObj(currentLine);
-  //   if(toObject && toObject.requete) {
-  //     const { requete, values } = toObject;
-  //     await db.executeSql(requete, values);
-  //   }
-  // });
-
   const proms = lines.map(async (line: string) => {
     let currentLine = line.split(defaultFieldDelimiter);
     let toObject = trasfomToObj(currentLine);
@@ -238,10 +207,18 @@ async function synchroClients(dataString: String, cb: Function): Promise<any> {
 
 }
 
+async function selectOneLasteValue(table: string, columns: string[]): Promise<any> {
+  const columsValue = columns && columns.length > 0 ? `, ${columns.join(',')}` : '';
+  const db = await getDatabase();
+  const newC = await db.executeSql(`Select max(id) ${columsValue} from ${table};`, []);
+  const file = newC[0].rows.item(0);
+  return file;
+}
+
 // SELECT * FROM table ORDER BY column DESC LIMIT 1;
 async function selectLastInsertFile(): Promise<string> {
   const db = await getDatabase();
-  const newC = await db.executeSql("SELECT * FROM LastFileDown ORDER BY date DESC LIMIT 1;", []);
+  const newC = await db.executeSql("Select max(id), name, date from LastFileDown;", []);
   const file = newC[0].rows.item(0);
   console.log({ file, newC });
   // return newC;
@@ -249,49 +226,31 @@ async function selectLastInsertFile(): Promise<string> {
 }
 
 // Get an array of all the lists in the database
-async function selectCountClients(): Promise<Counts> {
+async function selectCounts(): Promise<{
+  count: any;
+  table: string;
+}[]> {
   return getDatabase()
     .then(async (db) => {
-      // Get all the lists, ordered by newest lists first
-      const articles = await db.executeSql("SELECT COUNT(*) FROM Articles;");
-      const reglements = await db.executeSql("SELECT COUNT(*) FROM ModesReglements;");
-      const clients = await db.executeSql("SELECT COUNT(*) FROM Clients;");
-      const utilisateurs = await db.executeSql("SELECT COUNT(*) FROM Utilisateurs;");
-      const codebarres = await db.executeSql("SELECT COUNT(*) FROM ArticlesCodesBarres;");
-      const reglements_verifs = await db.executeSql("SELECT COUNT(*) FROM ModesReglementsVerifs;");
-      const magasins = await db.executeSql("SELECT COUNT(*) FROM Magasins;");
-      const motifs = await db.executeSql("SELECT COUNT(*) FROM MotifsRemises;");
-      const promos = await db.executeSql("SELECT COUNT(*) FROM Promos;");
-      const messages = await db.executeSql("SELECT COUNT(*) FROM Messages;");
-      const parametres = await db.executeSql("SELECT COUNT(*) FROM Parametres;");
-    
-      return {
-        articles: articles[0].rows.item(0)["COUNT(*)"],
-        reglements: reglements[0].rows.item(0)["COUNT(*)"],
-        clients: clients[0].rows.item(0)["COUNT(*)"],
-        utilisateurs: utilisateurs[0].rows.item(0)["COUNT(*)"],
-        codebarres: codebarres[0].rows.item(0)["COUNT(*)"],
-        reglements_verifs: reglements_verifs[0].rows.item(0)["COUNT(*)"],
-        magasins: magasins[0].rows.item(0)["COUNT(*)"],
-        motifs: motifs[0].rows.item(0)["COUNT(*)"],
-        parametres: parametres[0].rows.item(0)["COUNT(*)"],
-        promos: promos[0].rows.item(0)["COUNT(*)"],
-        messages: messages[0].rows.item(0)["COUNT(*)"],
-      }
+      const promiseAll = Object.keys(Tables).map(async table => {
+        const tbl = await db.executeSql(`SELECT COUNT(*) FROM ${table};`);
+        return {
+          count: tbl[0].rows.item(0)["COUNT(*)"],
+          table,
+        }
+      });
+      const res = await Promise.all(promiseAll);
+      console.log({ res });
+      return res;
+
     })
     .then((countAll) => {
       console.log({ countAll });
-      // if(results && results && results.rows) {
-      //   const row = results.rows.item(0);
-      //   console.log({ count: row["COUNT(*)"] });
-      //   return row["COUNT(*)"];
-      // }
-      // return countAll;
       return countAll;
     })
     .catch(k => {
       console.log({ k });
-      return initialCount;
+      return [];
     });
 }
 
@@ -508,7 +467,7 @@ export const sqliteDatabase: Database = {
   createClient,
   getAllClients,
   synchroClients,
-  selectCountClients,
+  selectCounts,
   synchroDown,
   insertSynchroOneToOne,
   insertLastFileDown,
@@ -517,4 +476,5 @@ export const sqliteDatabase: Database = {
   insertTable,
   updateTable,
   deleteTable,
+  selectOneLasteValue,
 };

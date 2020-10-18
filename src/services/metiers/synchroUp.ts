@@ -1,9 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDatabase } from '../../context/DatabaseContext';
-import { RequestDTO } from '../dto/request';
+import { RequestDTO } from '../../dto/request';
 import { post } from '../bdl/api';
+import { cle_serveur, code_mag, numero_caisse } from '../../data/faker';
 
 const toUrlData = (str: string) => str.replace(' ', '%20');
+
+export const actionType = (table: string) => {
+  switch (table) {
+    case 'Tickets':
+      return 'ticket';
+    case 'TicketsDetail':
+      return 'ticket_detail';
+    case 'Clients':
+      return 'client';
+    case 'TicketsPaiements':
+      return 'ticket_paiement';
+    case 'Messages':
+      return 'message';
+    case 'Utilisateurs':
+      return 'utilisateur';
+    case 'Clotures':
+      return 'cloture';
+    case 'Pointages':
+      return 'pointage';
+    case 'CloturesDetailsPaiement':
+      return 'clot_det_paiement';
+    default:
+      return 'ticket';
+  }
+}
 
 export function useMetiersSynchroUp() {
   const database = useDatabase();
@@ -21,10 +47,13 @@ export function useMetiersSynchroUp() {
   async function recursiveSynchroUp(sqlRequest: string, table: string, res: any[]) {
     let results: any[] = [];
     const list = await database.selectTable(sqlRequest);
+    console.log({ list });
     if (list && list.length) {
       const newRes = list.map(async ({ id, synchro_up, ...row }) => {
-        const dataApi = Object.keys(row).map((key) => `${key}=${toUrlData(row[key])}`).join('&')
-        const api = await post(dataApi);
+        const dataApi = Object.keys(row).map((key) => `${key}=${toUrlData(row[key])}`).join('&');
+        const isClient = table === 'Clients' ? `code_mag=${code_mag}&numero_caisse=${numero_caisse}&` : '';
+        const keys = `action${actionType(table)}&cle_serveur=${cle_serveur}&${isClient}`;
+        const api = await post(keys + dataApi);
         if(api && api.data) {
           updated(table, id);
         }

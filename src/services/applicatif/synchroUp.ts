@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useMetiersSynchroUp } from '../metiers/synchroUp';
 import { tables_synchro_up } from '../utils';
-import { RequestDTO } from '../dto/request';
 
 export function useAppSynchroUp() {
   
@@ -14,7 +13,10 @@ export function useAppSynchroUp() {
   }, []);
 
   async function synchroUp() {
-    const res = Object.keys(tables_synchro_up).map(async (table) => await synchroUpMetiers(table))
+    const promiseSelect = Object.keys(tables_synchro_up).map(async (table) => await synchroUpMetiers(table));
+    console.log({ promiseSelect });
+    const res = await Promise.all(promiseSelect);
+    console.log({ res });
     return res;
   } 
 

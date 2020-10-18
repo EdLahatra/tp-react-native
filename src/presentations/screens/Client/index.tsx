@@ -4,7 +4,7 @@ import ClientController, { reduxConnect, Props } from '../../../controllers/Clie
 
 import {styles} from './styles';
 
-import { useAppClients } from '../../../services/applicatif/clients';
+import { useAppClients } from '../../../services/metiers/clients';
 
 /*class ClientScreen extends ClientController {
     componentDidMount() {

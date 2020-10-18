@@ -147,7 +147,7 @@ export default {
   `,
 
   MotifsGeneriques: `
-  CREATE TABLE IF NOT EXISTS MotifsGenerique(
+  CREATE TABLE IF NOT EXISTS MotifsGeneriques(
     [id] INTEGER PRIMARY KEY AUTOINCREMENT,
     [date_modif] [varchar](5) NULL,
     [id_motif_generique] [varchar](5) NULL,
@@ -568,4 +568,25 @@ export default {
   )
   `,
 
+  OuverturesTiroir: `
+  CREATE TABLE IF NOT EXISTS OuverturesTiroir(
+    [id_ouverture] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [date] [datetime] NULL,
+    [code_mag] [varchar](5) NULL,
+    [caisse] [varchar](4) NULL,
+    [nom_user] [varchar](30) NULL,
+    [raison] [varchar](10) NULL
+  )
+`,
+
+  SynchroUp: `
+  CREATE TABLE IF NOT EXISTS SynchroUp(
+    [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [type_envoi] [varchar](25) NULL,
+    [id_ligne] [varchar](25) NULL,
+    [date_demande_envoi] [datetime] NULL,
+    [date_envoi] [datetime] NULL,
+    [msg_erreur] [varchar](255) NULL
+  )
+`,
 }

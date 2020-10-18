@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 
-import { useMetiersRequeteSQL } from '../metiers/requeteSQL';
+import { useMetiersRequeteSQL } from './requeteSQL';
 import { tables } from '../utils';
-import { RequestDTO } from '../dto/request';
+import { RequestDTO } from '../../dto/request';
+import { FormatData } from '../../interfaces';
 
 const { name } = tables.Tickets;
 
@@ -38,7 +39,7 @@ export function useAppControlesCaisses() {
     return res;
   }
 
-  async function insertControlesCaisse(data: { [s: string]: string; }) {
+  async function insertControlesCaisse(data: FormatData) {
     // const data = {
     //   numero_ticket: '',
     //   statut: '',
@@ -51,9 +52,7 @@ export function useAppControlesCaisses() {
     //   id_cloture: '',
     //   vendeurs: '',
     // };
-    const values = Object.values(data);
-    const request = new RequestDTO(initial).generateRequestInsert(data);
-    const newRows = await insertTable(request, values);
+    const newRows = await insertTable(data, name);
     console.log({ newRows });
     return newRows;
   }

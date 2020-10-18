@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { useMetiersRequeteSQL } from '../metiers/requeteSQL';
+import { useMetiersRequeteSQL } from './requeteSQL';
 import { tables } from '../utils';
 import { RequestDTO } from '../../dto/request';
 

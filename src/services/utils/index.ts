@@ -5,7 +5,7 @@ import { unzip } from 'react-native-zip-archive';
 import transformString from './convert';
 import { post } from '../technique/api';
 
-import config from '../../config';
+import config from '../../data/config';
 
 const { urlGetZip } = config;
 
@@ -26,17 +26,11 @@ export const fileN = {
 };
 
 export const tables_synchro_up = {
-  CloturesMensuelle: {
-    name: 'CloturesMensuelle',
+  Clotures: {
+    name: 'Clotures',
   },
   Clients: {
     name: 'Clients',
-  },
-  ControlesCaisse: {
-    name: 'ControlesCaisse',
-  },
-  CloturesAnnuelle: {
-    name: 'CloturesAnnuelle',
   },
   Pointages: {
     name: 'Pointages',
@@ -62,12 +56,24 @@ export const tables_synchro_up = {
   TicketsDetail: {
     name: 'TicketsDetail',
   },
-  TicketsPaiement: {
-    name: 'TicketsPaiement',
+  TicketsPaiements: {
+    name: 'TicketsPaiements',
   },
 };
 
 export const tables = {
+  ControlesCaisse: {
+    name: 'ControlesCaisse',
+  },
+  CloturesAnnuelle: {
+    name: 'CloturesAnnuelle',
+  },
+  CloturesMensuelle: {
+    name: 'CloturesMensuelle',
+  },
+  OuverturesTiroir: {
+    name: 'OuverturesTiroir',
+  },
   Utilisateurs: {
     name: 'Utilisateurs',
   },
@@ -210,7 +216,8 @@ export const unzipFile = async (name: string) => {
 
   const zipFiles = await unzip(sourcePath, temp, charset);
   if (zipFiles) {
-    await RNFS.unlink(sourcePath);
+    const removeZip = await RNFS.unlink(sourcePath);
+    console.log({ removeZip });
     return zipFiles;
   }
   return null;
@@ -240,6 +247,14 @@ export const ckeckCSVName = async (targetPath: string) => {
 }
 
 export const synchroOneToOne = async (file: string) => {
+  const filesOld = await ckeckCSVName(temp);
+  console.log({ filesOld });
+  if(filesOld && filesOld.length > 0) {
+    return {
+      zip_name: file,
+      files: filesOld,
+    };
+  }
   const nameLastFile = file && typeof file === 'string' && file.length > 10 ? file : 'no%20file';
   const filename = await post(nameLastFile);
   if (filename && filename.data && filename.data !== 'no update') {
@@ -264,3 +279,5 @@ export const synchroOneToOne = async (file: string) => {
     files: [],
   };
 }
+
+export const toDatetime = (date: Date) => new Date(date).toTimeString();

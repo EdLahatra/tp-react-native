@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 
-import { useMetiersRequeteSQL } from '../metiers/requeteSQL';
+import { useMetiersRequeteSQL } from './requeteSQL';
 import { tables } from '../utils';
-import { RequestDTO } from '../dto/request';
+import { RequestDTO } from '../../dto/request';
 
 const { name } = tables.Tickets;
 
@@ -50,9 +50,8 @@ export function useAppTicketsPaiements() {
       // date_annulation: '',
       // motif_annulation: '',
     // };
-    const values = Object.values(data);
-    const request = new RequestDTO(initial).generateRequestInsert(data);
-    const newRows = await insertTable(request, values);
+
+    const newRows = await insertTable(data, name);
     console.log({ newRows });
     return newRows;
   }

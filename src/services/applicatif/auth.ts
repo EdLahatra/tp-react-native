@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { useApplicatif } from './index';
 import { tables } from '../utils';
-import { RequestDTO } from '../dto/request';
+import { RequestDTO } from '../../dto/request';
 
 const table = tables.Utilisateurs.name;
 

@@ -2,23 +2,19 @@ import { useState, useEffect } from "react";
 import { Client } from "../services/repository/types/List";
 import { useDatabase } from "../context/DatabaseContext";
 
-import { Counts, initialCount } from '../interfaces/request';
-
 const newLine = /\r?\n/;
 const defaultFieldDelimiter = ";";
 
 export function useApp() {
   const [lists, setLists] = useState<Client[]>([]);
-  const [count, setCount] = useState<Counts>(initialCount);
   const [toObj, setToObj] = useState<Function>(() => {});
   const [flag, setFlag] = useState<boolean>(false);
-  const [lastFileDB, setLastFileDB] = useState<string>('');
+  const [lastFileDB] = useState<string>('');
   const [lineString, setlinesString] = useState<string[]>([]);
   const database = useDatabase();
 
   useEffect(() => {
     // refreshListOfLists();
-    selectCountClients();
     // getInsertLastFileDown();
   }, []);
 
@@ -43,59 +39,12 @@ export function useApp() {
     await database.createClient(newClient);
   }
 
-
-  async function selectTable(table: string, values: string[], limit: number, where: string): Promise<any[]> {
-    return await database.selectTable(table, values, limit, where);
-  }
-
   async function synchroDown(data: any, cb: Function) {
-    // const { dataString, trasfomToObj } = data;
-    // const lines = dataString.split(newLine);
-    // console.timeEnd('warmup');
-    // const nb = lines.length;
-    // // realm?.write(() => {
-    //   lines.map((line: string, key: number) => {
-    //     let currentLine = line.split(defaultFieldDelimiter);
-    //     let toObject = trasfomToObj(currentLine);
-    //     if(toObject && toObject.requete) {
-    //       const { requete, values } = toObject;
-    //       // await db.executeSql(requete, values);
-    //     }
-        
-    //     // const obj = { nom: currentLine[0], prenom: currentLine[1] || currentLine[2] }
-    //     // let test = 'Objects ======> ' + key + '/' + nb;
-    //     // console.time(test);
-    //     // // realm.create('Test', { nom: 'Honda', prenom: 'RSX' });
-    //     // realm.create('Test', obj);
-    //   });
-    // });
+
     console.timeEnd('warmup ::::>')
-    
-    // await database.synchroDown(data, cb);
-    // const { dataString, trasfomToObj } = data;
-    // const lines = dataString.split(newLine);
-    // lines.slice(0, 50).map(async (line: string, key: number) => {
-    //   let currentLine = line.split(defaultFieldDelimiter);
-    //   let toObject = trasfomToObj(currentLine);
-    //   if(toObject && toObject.requete) {
-    //     const { requete, values } = toObject;
-    //     const insertOne = await database.insertSynchroOneToOne(requete, values);
-    //     console.log({ insertOne, key });
-    //   }
-    // })
 
     const { dataString, trasfomToObj } = data;
     const lines = dataString.split(newLine);
-    // lines.slice(0, 50).map(async (line: string, key: number) => {
-      
-    // })
-    // let currentLine = lines[0].split(defaultFieldDelimiter);
-    // let toObject = trasfomToObj(currentLine);
-    // if(toObject && toObject.requete) {
-    //   const { requete, values } = toObject;
-    //   const insertOne = await database.insertSynchroOneToOne(requete, values);
-    //   console.log({ insertOne });
-    // }
     await setlinesString(lines);
     await setToObj(trasfomToObj);
     await recursiveSynchro(lines, trasfomToObj, cb);
@@ -139,33 +88,16 @@ export function useApp() {
     await database.synchroClients(dataString, cb);
   }
 
-  function refreshListOfLists() {
-    // Query all lists from the DB, then store them as state
-    return database.getAllClients().then(setLists);
-  }
-
-  async function selectCountClients() {
-    // Query all lists from the DB, then store them as state
-    return database.selectCountClients().then(setCount);
-    // const tes = await realm?.objects('Test');
-    // let array = Array.from(tes || []);
-    // console.log({ array });
-  }
-
   return {
-    count,
     lists,
     lastFileDB,
     createClient,
     synchroClients,
-    selectCountClients,
     synchroDown,
-    insertTest,
     requestFlagsSychro,
     recursiveSynchro,
     insertSynchroOneToOne,
     insertLastFileDown,
     getInsertLastFileDown,
-    selectTable,
   };
 }

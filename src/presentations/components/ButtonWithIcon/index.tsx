@@ -1,22 +1,23 @@
 import React, { useState } from "react";
 import {
     Text,
-  TouchableOpacity,StyleSheet, Image
+  TouchableOpacity,StyleSheet, Image, ImageSourcePropType
 } from "react-native";
 
 interface Props{
     message:string,
     onPress: () => void,
+    source:ImageSourcePropType,
 }
 
 const ButtonWithIcon : React.FunctionComponent<Props> = function (props) {
-  const { message,onPress } = props;
+  const { message,onPress,source } = props;
   
   return (
     
-    
+        
          <TouchableOpacity style={styles.container} onPress = {() => onPress()}>
-            <Image style={styles.img} source={require("../../resources/images/flash.png")}/>
+            <Image style={styles.img} source={source}/>
             <Text style={styles.txtstyle}>{message}</Text>
          </TouchableOpacity>
    
@@ -44,12 +45,13 @@ const styles = StyleSheet.create({
       fontSize:12,
       fontStyle:'normal',
       fontWeight:'bold',
-      color:'#000000'
+      color:'#3928A6',
+      textAlign: 'center'
       
   },
   img:{
-    width:20,
-    height:26,
+    width:24,
+    height:24,
    
   },
  

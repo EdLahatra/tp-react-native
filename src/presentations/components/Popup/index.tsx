@@ -8,17 +8,18 @@ import {
   View
 } from "react-native";
 interface Props{
-    message:string,
+    message:string | any,
     cancelButton:string,
     okButton:string,
+    okAction:() => void;
     modalVisible: boolean,
     isTwoButton: boolean,
     setModalVisible:(isok:boolean) => void
 }
 
 const Popup : React.FunctionComponent<Props> = function (props) {
-  const { message ,modalVisible,setModalVisible,cancelButton,okButton,isTwoButton} = props;
-  
+  const { message ,modalVisible,setModalVisible,cancelButton,okButton,isTwoButton,okAction, children } = props;
+
   return (
      
       <Modal
@@ -29,6 +30,7 @@ const Popup : React.FunctionComponent<Props> = function (props) {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+            <View>{children}</View>
             <Text style={styles.modalText}>{message}</Text>
             <View style={{flexDirection:'row'}}>
             { isTwoButton == true ?
@@ -42,7 +44,7 @@ const Popup : React.FunctionComponent<Props> = function (props) {
                           </TouchableHighlight>
                               <TouchableHighlight
                                   style={{ ...styles.openButton, backgroundColor: "#3928A6", flex: 1, marginStart: 8 }}
-                                  onPress={() => {
+                                  onPress={() => { okAction()
                                   } }
                               >
                                   <Text style={styles.textStyle}>{okButton}</Text>
@@ -69,8 +71,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor:'rgba(0, 0, 0, 0.8)'
-    
+    // backgroundColor:'rgba(0, 0, 0, 0.8)'
+    backgroundColor: 'rgba(68, 75, 84, 0.9)',
   },
   modalView: {
     margin: 20,

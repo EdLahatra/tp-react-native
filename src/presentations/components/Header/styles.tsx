@@ -20,12 +20,12 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     
     
-    color: '#34B6DC',
+    color: '#3928A6',
   },
   txtstyleNormal: {
     fontSize: 16,
     
-    color: '#34B6DC',
+    color: '#3928A6',
   },
   nomstyle:{
     fontSize: 10,
@@ -36,7 +36,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     marginTop: 20,
     marginStart:10,
-    color: '#34B6DC'
+    color: '#3928A6'
   },
   
 

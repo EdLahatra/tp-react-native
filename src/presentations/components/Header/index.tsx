@@ -42,9 +42,8 @@ export class Header extends React.Component<Props> {
            {this.props.ispass && (<Text style={styles.txtstyleNormal}>BIENVENUE </Text>  )}
            <Text style={styles.txtstyle}>{this.props.title}</Text>  
            </View>
-          <Text style={styles.nomstyle}>{this.props.nom}</Text>  
+          <Text style={styles.nomstyle}>{this.props.nom}</Text> 
            
-          
        </View>
            
 

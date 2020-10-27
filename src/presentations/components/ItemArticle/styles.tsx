@@ -12,6 +12,9 @@ export const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     height:52,
+    marginStart:10,
+    marginEnd:10,
+    marginTop:10,
     alignItems:'center',
     justifyContent:'center'
   },
@@ -48,9 +51,22 @@ export const styles = StyleSheet.create({
    
   },
   txtItem:{
-      marginStart:10,
-      marginEnd:10,
-  }
+      marginStart:15,
+      marginEnd:15,
+      height:20
+  },
+  inputname:{ 
+    textAlign: 'center',
+    backgroundColor: '#F5F5FF' ,
+    borderRadius: 5,
+    margin:5,
+    fontSize:14,
+    fontWeight:'bold',
+    color:'black',
+    flex:5,
+    height:44,
+    
+},
   
   
 });

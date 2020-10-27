@@ -3,26 +3,25 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from "@react-navigation/native";
+
 import { RootState } from '../../services/redux/reducers';
-import { Produit, ProduitsState } from '../../interfaces/produits';
 import { getProduitsAction } from '../../services/redux/produits/actions';
 
 import { StackParams } from '../../presentations/navigation';
-import {
-  NavigationParams,
-  NavigationScreenProp,
-  NavigationState,
-} from 'react-navigation';
+import { loginUser } from '../../services/redux/system/actions';
+import { FormatData } from '../../interfaces';
+
 
 type NavigationProps = StackNavigationProp<StackParams, 'Login'>;
-interface IProps extends Produit {
-  getProduits: () => Promise<void>;
-  produits: ProduitsState,
-}
+
+type Route = RouteProp<StackParams, 'Login'>;
 
 export interface Props {
-  //navigation: NavigationProps;
-  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
+	navigation: NavigationProps;
+	route: Route;
+	loginUser: (user: FormatData | null) => Promise<void>;
+  //navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
 export interface State {
@@ -43,14 +42,16 @@ export default class LoginController extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  produits: state.produits,
+	produits: state.produits,
+	system: state.system,
 })
 
 const mapDispatchToProps = (
   dispatch: ThunkDispatch<any, any, AnyAction>
 ) => {
   return {
-    getProduits: () => dispatch(getProduitsAction()),
+		getProduits: () => dispatch(getProduitsAction()),
+		loginUser: (user: FormatData | null) => dispatch(loginUser(user)),
   };
 };
 

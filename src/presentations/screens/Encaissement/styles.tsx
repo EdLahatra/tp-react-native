@@ -25,6 +25,12 @@ export const styles = StyleSheet.create({
         height:70,
         
       },
+      inputcontainer:{
+        flexDirection: 'row',
+        height:51,
+        marginTop:10
+        
+      },
       edtStyleCli:{
         flexDirection: 'row',
         flex:1,
@@ -59,6 +65,9 @@ export const styles = StyleSheet.create({
         backgroundColor: '#F5F5FF' ,
         borderRadius: 5,
         marginTop:5,
+        fontSize:14,
+        fontWeight:'bold',
+        color:'black',
         flex:5,
         height:44,
         
@@ -69,8 +78,8 @@ export const styles = StyleSheet.create({
         marginTop:5,
         marginStart:5,
         flex:1,
-        backgroundColor: '#859a9b',
-        borderRadius: 2,
+        backgroundColor: '#3928A6',
+        borderRadius: 5,
         justifyContent: 'center',
         alignItems: 'center',
         width:50,
@@ -82,10 +91,11 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.35,
       },
       img:{
-        width:20,
-        height:26,
+        width:24,
+        height:24,
        
       },
+     
       listContainer:{
         flexDirection:'row',
         marginTop:10
@@ -122,7 +132,14 @@ export const styles = StyleSheet.create({
     bottomview:{
       height:75, position:'absolute', left:0,right:0,bottom:0,backgroundColor:'#F2F2F2',flexDirection:'row',
       
-    }
+    },
+    txtstyle:{
+      fontSize:12,
+      fontStyle:'normal',
+      fontWeight:'bold',
+      color:'#3928A6',
+      textAlign: 'center'
+  },
   });
   
 

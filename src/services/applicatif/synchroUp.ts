@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { useMetiersSynchroUp } from '../metiers/synchroUp';
 import { tables_synchro_up } from '../utils';
+import { useMetiersRequeteSQL } from '../metiers/requeteSQL';
 
 export function useAppSynchroUp() {
   
@@ -9,7 +10,7 @@ export function useAppSynchroUp() {
 
   useEffect(() => {
     // refreshListOfLists();
-    // getInsertLastFileDown();
+    // getInsertSynchroDownFileCSV();
   }, []);
 
   async function synchroUp() {

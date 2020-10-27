@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDatabase } from '../../context/DatabaseContext';
 import { RequestDTO } from '../../dto/request';
 import { FormatData } from '../../interfaces';
@@ -8,7 +8,7 @@ export function useMetiersRequeteSQL() {
 
   useEffect(() => {
     // refreshListOfLists();
-    // getInsertLastFileDown();
+    // getInsertSynchroDownFileCSV();
   }, []);
 
   async function getEntity(data: any) {
@@ -26,8 +26,8 @@ export function useMetiersRequeteSQL() {
     return await database.selectTable(request);
   }
 
-  async function selectOneLasteValue(table: string, columns: string[]): Promise<any> {
-    return await database.selectOneLasteValue(table, columns);
+  async function selectOneLasteValue(table: string, columns: string[], where: string[]): Promise<any> {
+    return await database.selectOneLasteValue(table, columns, where);
   }
 
   async function insertTable(data: FormatData, table: string): Promise<any[]> {
@@ -36,9 +36,9 @@ export function useMetiersRequeteSQL() {
     return await database.insertTable(sqlRequest, values);
   }
 
-  async function updateTable(table: string, data: { [s: string]: string; }): Promise<any[]> {
-    const { req, values } = new RequestDTO({ table }).generateRequestUpdate(data);
-    return await database.updateTable(req, values);
+  async function updateTable(table: string, data: { [s: string]: FormatData; }, where: string[]): Promise<string> {
+    const req = new RequestDTO({ table }).generateRequestUpdate(data, where);
+    return await database.updateTable(req, []);
   }
 
   async function deleteTable(table: string, id: string): Promise<any[]> {
@@ -52,6 +52,7 @@ export function useMetiersRequeteSQL() {
     updateTable,
     deleteTable,
     selectOneLasteValue,
-    findTable,
+		findTable,
+		getEntity,
   };
 }

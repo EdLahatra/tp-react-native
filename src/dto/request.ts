@@ -1,3 +1,5 @@
+import { FormatData } from "../interfaces";
+
 const likeOrEq = (query: string, like: boolean) => {
   if(like) {
     return ` LIKE '%${query}%'`
@@ -7,26 +9,29 @@ const likeOrEq = (query: string, like: boolean) => {
 
 const addOperatorLogique = (req: any) => {
   const { where, query, like, operator } = req;
+  if(!where) {
+    return '';
+  }
+
   return where.reduce((acc: string, curr: string, index: number): any => {
     const isOperatorLogique = operator && (index + 1) < where.length ? operator : '';
     return `${acc} ${curr} ${likeOrEq(query, like)} ${isOperatorLogique} `;
   }, 'WHERE ');
 }
 
-const updatedCollumn = (columns: { [s: string]: string; }) => {
-  const setCollumn = Object.keys(columns).map((collumn) => `${collumn} = `).join('? ');
+const updatedCollumn = (columns: { [s: string]: FormatData; }): string => {
+  const setCollumn = Object.keys(columns).map((collumn) => `${collumn} = '${columns[collumn]}'`).join(', ');
   return setCollumn;
 }
 
 export class RequestDTO {
   table: string | undefined;
   where: string[] | undefined;
-  limit: string | undefined;
+  limit: number | 10 | undefined;
   query: string | undefined;
   like: boolean | undefined;
   operator: string | undefined;
   values: string[] | undefined;
-  // column: string | undefined;
 
   constructor(request: any) {
     if (request) {
@@ -36,6 +41,7 @@ export class RequestDTO {
       this.query = request.query;
       this.values = request.values;
       this.where = request.where;
+      this.limit = request.limit;
       // this.column = request.column?.join();
       // this.values = request.columns?.map(() => '?').join();
     }
@@ -56,13 +62,10 @@ export class RequestDTO {
     return req;
   }
 
-  generateRequestUpdate = (columns: { [s: string]: string; }) => {
-    const req = `UPDATE ${this.table} SET ${updatedCollumn(columns)};`;
+  generateRequestUpdate = (columns: { [s: string]: FormatData; }, where: string[]): string => {
+    const req = `UPDATE ${this.table} SET ${updatedCollumn(columns)} WHERE ${where[0]} = ${where[1]};`;
     console.log({ req });
-    return {
-      req,
-      values: Object.values(columns)
-    };
+    return req;
   }
 
   generateRequestDelete = () => {

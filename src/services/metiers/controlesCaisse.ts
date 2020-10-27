@@ -18,7 +18,7 @@ export function useAppControlesCaisses() {
 
   useEffect(() => {
     // refreshListOfLists();
-    // getInsertLastFileDown();
+    // getInsertSynchroDownFileCSV();
   }, []);
 
   async function getControlesCaisses(query: string) {

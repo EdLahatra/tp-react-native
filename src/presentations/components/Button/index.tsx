@@ -7,15 +7,16 @@ import {
 interface Props{
     message:string,
     onPress: () => void,
+    iscancel:boolean 
 }
 
 const Button : React.FunctionComponent<Props> = function (props) {
-  const { message,onPress } = props;
+  const { message,onPress,iscancel } = props;
   
   return (
     
     
-         <TouchableOpacity style={styles.container} onPress = {() => onPress()}>
+         <TouchableOpacity style={iscancel? styles.container:styles.containerOk} onPress = {() => onPress()}>
             <Text style={styles.txtstyle}>{message}</Text>
          </TouchableOpacity>
     
@@ -26,6 +27,15 @@ const Button : React.FunctionComponent<Props> = function (props) {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+   height:50,
+   borderRadius:5,
+   backgroundColor:'#787CC2'
+    
+  },
+  containerOk: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

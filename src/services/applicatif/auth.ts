@@ -1,33 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
-import { useApplicatif } from './index';
-import { tables } from '../utils';
-import { RequestDTO } from '../../dto/request';
-
-const table = tables.Utilisateurs.name;
+import { useMetiersRequeteSQL } from '../metiers/requeteSQL';
 
 export function useAppAuth() {
 
-  const { getEntity } = useApplicatif();
-  
-
+  const { findTable } = useMetiersRequeteSQL();
 
   useEffect(() => {
-    // refreshListOfLists();
-    // getInsertLastFileDown();
   }, []);
 
-  async function getUsers(query: string) {
-    const data = {
-      query,
-      table,
-      where: ['nom', 'prenom'],
-      like: true,
-      operator: 'OR',
-      limit: 10,
-    };
-
-    const res = await getEntity(data);
+  async function getUsers(data: any) {
+    const res = await findTable({...data, table: 'Utilisateurs'});
     console.log({ res });
     return res;
   } 

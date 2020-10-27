@@ -34,6 +34,7 @@ export default {
     fontSize: 14,
     fontWeight: 'bold',
     paddingStart:5,
+    marginTop:5
   },
   heightItem:{
     height:40,
@@ -43,7 +44,7 @@ export default {
     right:0,
     marginEnd:10,
     position: 'absolute',
-    backgroundColor: '#859a9b',
+    backgroundColor: '#3928A6',
     borderRadius: 2,
     justifyContent: 'center',
     alignItems: 'center',
@@ -59,5 +60,16 @@ export default {
     width:20,
     height:26,
    
-  }
+  },
+  inputname:{ 
+    backgroundColor: '#F5F5FF' ,
+    borderRadius: 5,
+    
+    fontSize:14,
+    fontWeight:'bold',
+    color:'black',
+    flex:5,
+    height:44,
+    
+},
 };

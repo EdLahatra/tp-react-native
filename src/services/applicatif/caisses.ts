@@ -1,17 +1,17 @@
 import { useEffect } from 'react';
 
-import { useAppClotures } from '../metiers/clotures';
+import { useMetierClotures } from '../metiers/clotures';
 import { useAppOuverturesTiroir } from '../metiers/ouvertureTirroir';
 import { FormatData } from '../../interfaces';
 
 export function useCaisseApp() {
 
-  const { insertClotures, selectClotutre } = useAppClotures();
+  const { insertClotures, selectClotutre, updateClotures } = useMetierClotures();
   const { insertOuverturesTiroir } = useAppOuverturesTiroir();
 
   useEffect(() => {
-    checkCloture();
-    // getInsertLastFileDown();
+    // checkCloture();
+    // getInsertSynchroDownFileCSV();
   }, []);
 
   async function checkCloture() {
@@ -28,10 +28,18 @@ export function useCaisseApp() {
       res_cloture,
       res_ouverture,
     };
-  } 
+  }
+
+  async function clotureCaisses2(user: string) {
+    // 637363953100000000 1603014612869
+    const res_cloture = await updateClotures(user);
+  
+    return res_cloture;
+  }
   
   return {
     ouvertureCaisse,
     checkCloture,
+    clotureCaisses2,
   };
 }

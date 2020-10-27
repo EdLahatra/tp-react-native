@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems:'stretch',
         padding:10,
+        backgroundColor:'white'
        
       },
       linearheader:{
@@ -15,14 +16,16 @@ export const styles = StyleSheet.create({
       },
       linearclientheader:{
         flexDirection: 'column',
-        
-        height:120,
+        flex:1,
+       marginTop:10
         
       },
       edtStyleCli:{
         flexDirection: 'row',
         flex:1,
-        height:60
+       
+        borderRadius:5,
+        
       },
       box1:{
         flex:1,
@@ -36,7 +39,8 @@ export const styles = StyleSheet.create({
       },
       txtTitle:{
         fontSize:10,
-        fontWeight:'bold'
+        fontWeight:'bold',
+        marginBottom:10
       },
       txtValue:{
         fontSize:16,
@@ -45,9 +49,9 @@ export const styles = StyleSheet.create({
       },
       inputname:{ 
         borderRadius: 5,
-        marginTop:5,
         flex:5,
-        height:44,
+        backgroundColor:'#F2F2F2',
+        height:50
     },
     
     button: {

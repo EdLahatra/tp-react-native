@@ -6,8 +6,9 @@ export const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         flexDirection: 'column',
         alignItems:'stretch',
-        padding:10,
-       
+        paddingBottom: 0,
+        paddingLeft: 0,
+        paddingRight : 0,
       },
       linearheader:{
         flexDirection: 'row',
@@ -15,8 +16,8 @@ export const styles = StyleSheet.create({
       },
       linearclientheader:{
         flexDirection: 'column',
-        height:120,
-        
+        height: 90,
+        padding:10,
       },
       edtStyleCli:{
         flexDirection: 'row',
@@ -38,7 +39,8 @@ export const styles = StyleSheet.create({
         fontWeight:'bold'
       },
       txtValue:{
-        fontSize:16,
+        flex: 1,
+        fontSize:13,
         fontWeight:'bold',
         color:'#3928A6',
       },
@@ -54,15 +56,13 @@ export const styles = StyleSheet.create({
     button: {
     
         marginTop:5,
-        marginStart:5,
         flex:1,
-        backgroundColor: '#859a9b',
-        borderRadius: 2,
+        borderRadius: 5,
         justifyContent: 'center',
         alignItems: 'center',
         width:50,
         height:44,
-        
+        backgroundColor: '#E0C298',
         shadowColor: '#303838',
         shadowOffset: { width: 0, height: 5 },
         shadowRadius: 10,
@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
       },
       img:{
         width:20,
-        height:26,
+        height:20,
        
       },
      

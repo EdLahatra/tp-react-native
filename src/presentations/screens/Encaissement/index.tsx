@@ -1,90 +1,302 @@
 import React ,{ useEffect, useRef, useState }from 'react';
-import { View,TouchableOpacity , Text, TextInput,Image,FlatList} from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import EncaissementController, { Props, reduxConnect } from '../../../controllers/Encaissement';
-import { CheckCodeInput, ItemArticle } from '../../components';
+import { View,TouchableOpacity , Text, TextInput,Image,FlatList,BackHandler} from 'react-native';
+import  { Props, reduxConnect } from '../../../controllers/Encaissement';
 import Button from '../../components/Button';
 import ButtonWithIcon from '../../components/ButtonWithIcon';
 import TextWithResult from '../../components/TextWithResult';
-import { Article, ArticleDto } from './Article';
-import { STRING } from '../../../services/repository/database/Constants'
+import { STRING } from '../../../data/Constants'
 import {styles} from './styles';
 import Popup from '../../components/Popup';
+import Popover from 'react-native-popover-view';
+import ViewTooltip from '../../components/ViewTooltip';
+import ItemArticle from '../../components/ItemArticle';
+import { useAppArticles } from '../../../services/applicatif/articles';
+import { ArticleI } from '../../../interfaces';
+import { useAppTickets } from '../../../services/applicatif/tickets';
+import { toDatetime } from '../../../services/utils';
+import {  Tickets } from '../../../interfaces/tickets';
+import { useIsFocused } from "@react-navigation/native";
+import EncaissementHeader from '../../components/NavigationHeader/encaissement';
+import PopupWithTextInput from '../../components/PopupWithTextInput';
+import { useCaisseApp } from '../../../services/applicatif/caisses';
 
-const articlesList:Array<ArticleDto> = [];
+
+const articlesList:Array<ArticleI> = [];
 export const EncaissementScreen : React.FunctionComponent<Props> = function (props) {
-    const [articles, setArticles] = useState(Array<ArticleDto>());
-    const [count, setCount] = useState(0);
-    const [nbArticles, setNbArticle] = useState(0);
-    const [client, setClient] = useState('');
-    const { navigation } = props;
-    const [modalVisible, setModalVisible] = useState(false);
+    const [articles, setArticles] = useState(Array<ArticleI>()); // array articles
+    const [count, setCount] = useState(0); //total article
+    const [nbArticles, setNbArticle] = useState(0); //nombre articles
+    const [client, setClient] = useState(''); //client
+    const [articleChoisi,setArticleChoisi] = useState('');
+    const { navigation,route,system } = props;
+    const [modalVisible, setModalVisible] = useState(false); //popup visibility
+    const { getArticles } = useAppArticles(); //List articles venant de la base
+    const [devises,setDevise] = useState(''); // Euro 
+    const {   generateNumeroTickets,getTickets,insertTickets} = useAppTickets();
+    const { checkCloture } = useCaisseApp();
+   
+    const [ticketASauver, setTicketASauver] = useState({
+        numero_ticket: '',
+        statut: 0,
+        user_creation: '',
+        id_client: '',
+        user_annulation: '',
+        motif_annulation: '',
+        date_debut: toDatetime(new Date()),
+        date_fin: toDatetime(new Date()),
+        id_cloture: '',
+        vendeurs: '',
+        synchro_up:0,
+       
+      });
+    const [numeroTickerGenerer, setNumerorTicketGenerer] = useState('');
     
+    const [modalVisibleMiseAttente,setModalVisibleMiseAttente] = useState(false);
+    const [modalVisibleAnnulerVente,setModalVisibleAnnulerVente] = useState(false);
+    const [confirmExit,setConfirmExit] = useState(false);
+    const [modalVisibleMotifAnnulation,setModalVisibleMotifAnnulation] = useState(false);
+    const { user : {nom , nom_user } } = system;
+    function handleBackButtonClick() {
+        setConfirmExit(true);
+        
+        return true;
+      }
+     function goBack(isback:boolean){
+        setConfirmExit(false);
+        
+        navigation.goBack();
+     } 
+    useEffect(() => {
+        /*if(route.params?.fromHome){
+           
+            initValue();
+            
+        }*/
+        
+        
+       
+       if(route.params?.clientI){
+        
+        setClient(route.params?.clientI.nom+' '+route.params?.clientI.prenom);
+       
+       }
+       
+       
+       
+    },[route.params?.clientI]);
+    useEffect(() => {
+        if(route.params?.fromHome){
+           
+            initValue();
+            
+        }
+    },[route.params?.fromHome]);
     useEffect(() => {
        
-        getArticles();
-    },[]);
-
-
-
-    function getArticles(){
-       let article1:ArticleDto = new ArticleDto('000123','dd','120$','30%',1);
-       let article2:ArticleDto = new ArticleDto('000124','Huile','130$','40%',2);
-       let article3:ArticleDto = new ArticleDto('000125','Vin','130$','40%',2);
-       articlesList.push(article1);
-       articlesList.push(article2);
-       articlesList.push(article3);
-       
-       //this.setState({articles:articles});
-       setArticles(articlesList);
-       countTotalQuantite();
-       nbArticle();
+        BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+        return () => {
+          BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick);
+        };
+      }, []);
+    
+    function initValue(){
+        
+        setArticleChoisi('');
+        articlesList.length = 0;
+        setArticles(articlesList);
+        setClient('');
+        setNbArticle(0);
+        setCount(0);
+        getInfoParameter();
     }
+    
+    async function getInfoParameter(){
+    
+        const { params: { numero_caisse, numero_enseigne, numero_mag} } = system;
+       
+        
+        console.log(numero_enseigne+' '+numero_mag+' '+numero_caisse);
+        // const data = {
+        //     //query: 1111,
+        //     table: "Tickets",
+        //     // where: ['statut'],
+        //     //where: ['numero_ticket'],
+        //     like: true,
+        //     // operator: 'OR',
+        //     limit: 200,
+        // };
+        // const ticketsAll:Array<Tickets> = await getTickets(data);
+        // console.log('all tickets',ticketsAll[ticketsAll.length - 1]);
+        const dernierticket = numero_enseigne+numero_mag+numero_caisse;
+        // if(ticketsAll != null){
+        //     if(ticketsAll.length != 0){
+        //         dernierticket = ticketsAll[ticketsAll.length - 1].numero_ticket;
+        //     }
+        // }
+        const ticket = await generateNumeroTickets(dernierticket);
+        const { id_cloture } = await checkCloture();
+        console.log('ticket recuperer', ticket);
+        const newTicketAsauverApresValidation = {
+            numero_ticket: ticket,
+            statut: 0,
+            user_creation: nom_user,
+            id_client: '',
+            user_annulation: '',
+            motif_annulation: '',
+            date_debut: toDatetime(new Date()),
+            date_fin: toDatetime(new Date()),
+            id_cloture: id_cloture || '',
+            vendeurs: '',
+            synchro_up:0,
+            
+        };
+        
+        //const ticket = await insertTickets(newTicket);
+        //console.log('ticket',ticket);
+        setTicketASauver(newTicketAsauverApresValidation);
+        setNumerorTicketGenerer(ticket);
+   }
+
+
+ 
     function countTotalQuantite(){
         let i = 0;
+        let nombrearticle = 0;
+        let devise = '';
         articlesList.forEach(function (value){
-        i = i + value.qt;
+            devise = value.article_devise;
+            nombrearticle =  value.qt * Number(value.article_pv_ttc.replace(',','.'));
+        i = i + nombrearticle;
         })
+        setDevise(devise);
         setCount(i);
     }
     function nbArticle(){
         setNbArticle(articlesList.length);
     }
-    function showPopup(){
-
-    }
+   
     function goToPaiement(){
         if(client == null || client == ""){
             setModalVisible(true);
+        }else{
+            
+            navigation.navigate('Paiement',{articleTotal:{count,devises},clientI:route.params?.clientI,iscodechoisi:false,
+            montantregle:'',item:route.params?.item, newTicketsASauver:ticketASauver});
         }
     }
-    function addArticle(){
-        
-        let article:ArticleDto = new ArticleDto('00014','Biscuit','120$','30%',2);
-        let isExist:boolean = false;
-        
-        console.log('Code size ',articlesList.length);
+    function deleteArticle(item:ArticleI){
         articlesList.forEach(function (value) {
-            console.log('Code ',value.code);
-            if(value.code == article.code){
-                
-                value.qt = value.qt + 1;
-                isExist = true;
+            console.log('Code ',value.article_code_article);
+            if(value.article_code_article == item.article_code_article){
+                if(value.qt >= 1){
+                    value.qt = value.qt - 1;
+                }
+               
             }
             
           }); 
-          if(!isExist){
-            console.log('Code inseré');
-            articlesList.push(article);
-          }
-          //setArticles(articlesList);
-          setArticles(() => ([...[], ...articlesList]));
+         
+          setArticles(() => (([...[], ...articlesList]).reverse()));
           countTotalQuantite();
           nbArticle();
-        //this.setState({
-        //    articles: articles
-        //});
+    }
+    function incrementArticle(item:ArticleI){
+        
+       articlesList.forEach(function (value) {
+            console.log('Code ',value.article_code_article);
+            if(value.article_code_article == item.article_code_article){
+                
+                value.qt = value.qt + 1;
+                
+            }
+            
+          }); 
+         
+          setArticles(() => (([...[], ...articlesList]).reverse()));
+          countTotalQuantite();
+          nbArticle();
+    }
+   async function addArticle(code:string){
+        
+        //let article:ArticleDto = new ArticleDto('00014','Biscuit',12,'30%',2);
+        const article_query = {
+            // query: code,
+            // where: ['article_code_article'],
+            // limit: 1,
+          };
+        const articles:Array<ArticleI> = await getArticles(article_query);
+        if(articles != null ){
+            let articleSingle:ArticleI;
+            if(articles.length != 0){
+                articleSingle = articles[0];
+                articleSingle.qt = 1;
+                let isExist:boolean = false;
+        
+                
+                articlesList.forEach(function (value) {
+                   
+                    if(value.article_code_article == articleSingle.article_code_article){
+                        
+                        value.qt = value.qt + 1;
+                        isExist = true;
+                    }
+                    
+                  }); 
+                  if(!isExist){
+                    console.log('Code inseré');
+                    articlesList.push(articleSingle);
+                  }
+                  //setArticles(articlesList);
+                  setArticles(() => (([...[], ...articlesList]).reverse()));
+                  countTotalQuantite();
+                  nbArticle();
+            }
+        }
+       
 
+    }
+    function showPopupAttente(){
+        setModalVisibleMiseAttente(true);
+    }
+
+    async function mettreEnAttente(){
+        ticketASauver.date_fin = toDatetime(new Date());
+        ticketASauver.statut = 0;
+        const idC:any = route.params?.clientI.id_client;
+        ticketASauver.id_client = idC;
+        console.log('SAVE',ticketASauver);
+        const ticket = await insertTickets(ticketASauver);
+        initValue();
+
+        setModalVisibleMiseAttente(false);
+    }
+    function showPopupAnnulerVente(){
+        setModalVisibleAnnulerVente(true);
+    }
+    function annulerVente(){
+        setModalVisibleAnnulerVente(false);
+        showPopupMotifAnnulation();
+    }
+    function showPopupMotifAnnulation(){
+        setModalVisibleMotifAnnulation(true);
+    }
+    async function enregistrerMotifAnnulation(motif:string){
+        ticketASauver.date_fin = toDatetime(new Date());
+        ticketASauver.statut = 0;
+        ticketASauver.motif_annulation = motif;
+        const idC:any = route.params?.clientI.id_client;
+        ticketASauver.id_client = idC;
+        ticketASauver.user_annulation = nom+' '+nom_user,
+        console.log('SAVE',ticketASauver);
+        const ticket = await insertTickets(ticketASauver);
+        initValue();
+        setModalVisibleMotifAnnulation(false);
+    }
+    function goToHome(){
+        handleBackButtonClick();
+    }
+    function goToHisto(){
+        navigation.navigate('HistoriqueTicket');
     }
     function renderSeparatorView() {
         return (
@@ -96,24 +308,24 @@ export const EncaissementScreen : React.FunctionComponent<Props> = function (pro
           />
         );
       }
-   
+      
+      
         return (
             
-             <View style={{flex: 1}}>
-            <ScrollView 
-            scrollEnabled>
-            <View style={styles.container}>
-               
-               <View style={styles.linearheader}>
+             <View style={{flex: 1,backgroundColor:'#FFFFFF'}}>
+           
+               <EncaissementHeader goToHome={()=> goToHome()} goToHisto={()=> goToHisto()}/>
+               <View style={{marginStart:10,marginEnd:10,marginTop:20}}>
+                    <View style={styles.linearheader}>
                     <View style={styles.box1}>
                         <Text style={styles.txtTitle}>Numéro de ticket</Text>
 
-                       <Text style={styles.txtValue}>0331433311</Text>
+                        <Text style={styles.txtValue}>{numeroTickerGenerer}</Text>
                     </View>
-                    <View style={styles.box2}>
+                    {/*<View style={styles.box2}>
                         <Text style={styles.txtTitle}>Vendeur</Text>
-                        <Text style={styles.txtValue}>John wick</Text>
-                    </View>
+                        <Text style={styles.txtValue}>{route.params?.item.nom+' '+route.params?.item.prenom}</Text>
+        </View>*/}
                </View>
                
                <View style={styles.linearclientheader}>
@@ -123,6 +335,7 @@ export const EncaissementScreen : React.FunctionComponent<Props> = function (pro
                         style={styles.inputname}
                         multiline={false}
                         autoCorrect={false}
+                        editable = {false}
                         autoCapitalize='none'
                         keyboardType='numeric'
                         onChangeText={(value) => setClient(value)}
@@ -134,7 +347,7 @@ export const EncaissementScreen : React.FunctionComponent<Props> = function (pro
                             navigation.navigate('Client');
                          }}>
             
-                        <Image style={styles.img} source={require("../../resources/images/flash.png")}/>
+                        <Image style={styles.img} source={require("../../resources/images/account_circle.png")}/>
     
                      </TouchableOpacity>
                  </View>
@@ -142,7 +355,30 @@ export const EncaissementScreen : React.FunctionComponent<Props> = function (pro
                </View>
                <Text style={[styles.txtTitle,styles.margin]}>Saisie code article</Text>
                
-               <CheckCodeInput add={() => addArticle()} ></CheckCodeInput>
+               <View style={styles.inputcontainer}>
+                        <View style={{flex:5}}>
+                   
+                         <TextInput
+                                    style={styles.inputname}
+                                    multiline={false}
+                                    autoCorrect={false}
+                                    autoCapitalize='none'
+                                    keyboardType='numeric'
+                                    onChangeText={(value) => setArticleChoisi(value)}
+                                    value={articleChoisi}
+                                    placeholder=''/>
+                                
+                        
+                       
+                        </View>
+                        <TouchableOpacity style={styles.button} onPress={() => addArticle(articleChoisi)} >
+                        
+                            <Image style={styles.img} source={require("../../resources/images/done.png")}/>
+                    
+                        </TouchableOpacity>
+        
+                </View>
+
                
                <View style={styles.listContainer}>
                    <View style={styles.chp1}>
@@ -158,46 +394,61 @@ export const EncaissementScreen : React.FunctionComponent<Props> = function (pro
                         <Text style={[styles.txtTitle,styles.headertxtColor]}>Quantité</Text>
                    </View>
                </View>
+                </View>
                <FlatList
+               
                style={{flex:1}}
                 data = {articles}
-                scrollEnabled = {false}
-                ItemSeparatorComponent={renderSeparatorView}
-                renderItem={({item}) =>  
-                <ItemArticle article={item}  /> } />
-                <View style={styles.result}>
+                scrollEnabled = {true}
+                
+                ListFooterComponent={<View style={{marginStart:10,marginEnd:10,marginTop:20,marginBottom:80}}>
+                    <View style={styles.result}>
                     <View style={styles.article}>
-                        <TextWithResult message='Articles:' result={nbArticles.toString()}></TextWithResult>
+                        <TextWithResult message='Articles:' result={nbArticles.toString() }></TextWithResult>
                     </View>
                     <View style={styles.total}>
-                        <TextWithResult message='Total:' result={count.toString()}></TextWithResult>
+                        <TextWithResult message='Total:' result={count+ ' '+devises}></TextWithResult>
                     </View>
                     <View style={styles.remise}>
-                        <TextWithResult message='Remise:' result='10'></TextWithResult>
+                        <TextWithResult message='Remise:' result='0'></TextWithResult>
                     </View>
                 </View>
                 <View style={{marginTop:10,flexDirection:'row'}}>
-                    <Button message='Paiements' onPress={() => goToPaiement()}></Button>
+                    <Button message='Paiements' iscancel={false} onPress={() => goToPaiement()}></Button>
                 </View>
-
+                </View>}
+                ItemSeparatorComponent={renderSeparatorView}
+                renderItem={({item}) =>  
+                <ItemArticle article={item} addArticle={() => incrementArticle(item)} deleteArticle={() => deleteArticle(item)} /> } />
 
                 
-            </View >
+
+
            
-            </ScrollView>
            
             <View style={styles.bottomview}>
-                   <View style={{flex:1}}>
-                    <ButtonWithIcon message={STRING.MENU_REMISE} onPress={ () => {}}/>
+                    <View style={{flex:1}}>
+                    
+                        <Popover
+                             from={(
+                                <TouchableOpacity style={{flex:1,alignItems:'center', justifyContent:'center'}}>
+                                    <Image style={styles.img} source={require("../../resources/images/vector.png")}/>
+                                    <Text style={styles.txtstyle}>{STRING.MENU_REMISE}</Text>
+                                </TouchableOpacity>
+                              )}>
+                               <ViewTooltip txtOne={STRING.REMISE_PROMO} txtTwo={STRING.REMISE_PANIER}txtThree={STRING.REMISE_ART}
+                               isFourButton={false} txtFour="" />
+                        
+                        </Popover>
                     </View> 
                     <View style={{flex:1}}>
-                    <ButtonWithIcon message={STRING.MENU_REMISE} onPress={ () => {}}/>
+                    <ButtonWithIcon message={STRING.MENU_ART_SPEC} source = {require("../../resources/images/stars.png")} onPress={ () => {navigation.navigate('SpecialArticle')}}/>
                     </View>  
                     <View style={{flex:1}}>
-                    <ButtonWithIcon message={STRING.MENU_REMISE} onPress={ () => {}}/>
+                    <ButtonWithIcon message={STRING.MENU_ATTENTE} source = {require("../../resources/images/hourglass.png")} onPress={ () => showPopupAttente()}/>
                     </View>  
                     <View style={{flex:1}}>
-                    <ButtonWithIcon message={STRING.MENU_REMISE} onPress={ () => {}}/>
+                    <ButtonWithIcon message={STRING.MENU_ANN_VENTE} source = {require("../../resources/images/remove_shopping_cart.png")} onPress={ () => showPopupAnnulerVente()}/>
                     </View>      
                         
             </View>
@@ -207,6 +458,24 @@ export const EncaissementScreen : React.FunctionComponent<Props> = function (pro
                 okButton = {STRING.OK}
                 isTwoButton = {false}
                 message = "Aucun client n'est associé à cette vente" >
+                
+            </Popup>
+            <Popup message={STRING.TXT_VENTE_EN_COURS_EN_ATTENTE} isTwoButton cancelButton={STRING.Cancel} okButton={STRING.OK}
+            okAction={() => mettreEnAttente()}
+            modalVisible = {modalVisibleMiseAttente} setModalVisible = {setModalVisibleMiseAttente}/>
+              <Popup message={STRING.TXT_ABANDON_VENTE} isTwoButton cancelButton={STRING.Cancel} okButton={STRING.OK}
+            okAction={() => annulerVente()}
+            modalVisible = {modalVisibleAnnulerVente} setModalVisible = {setModalVisibleAnnulerVente}/>
+            
+            <PopupWithTextInput message={STRING.TXT_MOTIF_tiCKET} cancelButton={STRING.Cancel} okButton={STRING.OK}
+            okAction={(value) => enregistrerMotifAnnulation(value)}
+                             modalVisible = {modalVisibleMotifAnnulation} setModalVisible = {setModalVisibleMotifAnnulation}/>
+            <Popup modalVisible ={confirmExit} 
+                 setModalVisible={(btnx) => goBack(btnx)}
+                cancelButton = 'Annuler'
+                okButton = {STRING.OK}
+                isTwoButton = {false}
+                message = "Ce ticket sera perdu. Vous êtes sûr de revenir à l'acceuil" >
                 
             </Popup>
             </View>

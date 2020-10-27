@@ -47,9 +47,9 @@ export class DatabaseInitialization {
     const dropAllTables = false;
     // if (dropAllTables) {
       // transaction.executeSql("DROP TABLE IF EXISTS Utilisateurs;");
-      // transaction.executeSql("DROP TABLE IF EXISTS LastFileDown;");
-      // transaction.executeSql("DROP TABLE IF EXISTS Version;");
-      // transaction.executeSql("DROP TABLE IF EXISTS Clients;");
+      // transaction.executeSql("DROP TABLE IF EXISTS SynchroDownFileCSV;");
+      // transaction.executeSql("DROP TABLE IF EXISTS Tickets;");
+      // transaction.executeSql("DROP TABLE IF EXISTS TicketsPaiements;");
       // transaction.executeSql("DROP TABLE IF EXISTS Articles;");
       // transaction.executeSql("DROP TABLE IF EXISTS ModesReglements;");
       // transaction.executeSql("DROP TABLE IF EXISTS Promos;");
@@ -59,6 +59,7 @@ export class DatabaseInitialization {
       // transaction.executeSql("DROP TABLE IF EXISTS Parametres;");
     // }
 
+    // Object.keys(Tables).map(table => transaction.executeSql(`DROP TABLE IF EXISTS ${table};`));
     Object.values(Tables).map(table => transaction.executeSql(table));
 
   }

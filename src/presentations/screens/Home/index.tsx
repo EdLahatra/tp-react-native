@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Text, View, SafeAreaView, ScrollView, Button, TextInput, Dimensions } from 'react-native';
 
 import { StackNavigationProp } from '@react-navigation/stack';
-
-import { useClients } from "../../../hooks/home";
 
 import styles from './styles';
 
@@ -13,11 +11,15 @@ import { StackParams } from '../../../presentations/navigation/main';
 
 import { File, Flags } from '../../../interfaces/request';
 import { useMetiersApp } from '../../../services/metiers';
+
 import { useCaisseApp } from '../../../services/applicatif/caisses';
 
-import data from '../../../data/faker';
+import faker from '../../../data/faker';
 import { useAppSynchroUp } from '../../../services/applicatif/synchroUp';
 import { useAppTickets } from '../../../services/applicatif/tickets';
+import { useAppClients } from '../../../services/applicatif/clients';
+import { useAppAuth } from '../../../services/applicatif/auth';
+import { useAppArticles } from '../../../services/applicatif/articles';
 
 var md5 = require('md5');
 
@@ -33,19 +35,41 @@ interface IProps {
   request: Flags;
 }
 
+function string2Bin(str: string) {
+  var result = [];
+  for (var i = 0; i < str.length; i++) {
+    result.push(str.charCodeAt(i));
+  }
+  return result;
+}
+
+function decimalToHexString(number: any) {
+  if (number < 0) {
+    number = 0xFFFFFFFF + number + 1;
+  }
+
+  return number.toString(16).toUpperCase();
+}
+
+const toMd5 = (text: string) => {
+  const array = string2Bin(text); // [49, 50, 51, 52, 53]
+  console.log({ array });
+  const arrayToMd5 = md5(array);
+  console.log({ md5array: md5(text) });
+  let res = '';
+  for (let i = 0; i < arrayToMd5.length; i++) {
+    let hex = arrayToMd5[i].toString(16);
+    console.log(arrayToMd5[i] + ' === ' + hex);
+    res = res.concat(hex)
+  }
+  return res;
+}
 
 export const ScanScreen: React.FunctionComponent<IProps> = function (props) {
   const { request, navigation } = props;
-
   const { counts, selectCounts, lastFileName, linesInsert } = useMetiersApp();
-  // const { ouvertureCaisse, checkCloture } = useCaisseApp();
-  // const { synchroUp } = useAppSynchroUp();
-  const { insertTickets, getTickets } = useAppTickets();
 
-  const { getInsertLastFileDown } = useClients();
-  const [] = useState(false);
-
-  const [fileLaste, setFileLaste] = useState('');
+  const { getArticlesByCodeBarres } = useAppArticles();
 
   useEffect(() => {
     initialState();
@@ -53,36 +77,27 @@ export const ScanScreen: React.FunctionComponent<IProps> = function (props) {
 
   async function initialState() {
     console.log('message  =================++>');
-    console.log(md5('123456'), md5('shpt'), md5(md5('12345') + 'shpt'));
-    // e10adc3949ba59abbe56e057f20f883e 8fb1c0a7415f2ef042ce914dd1e871bb b4efccce5773c4b59a221a2b4356eb8c
-    const name = await getInsertLastFileDown();
-    return setFileLaste(name);
+    // console.log(toMd5('12345'));
+    console.log(toMd5(toMd5('12345') + 'shpt'));
+    // 73CD690B5A73807FA4D33540D3323CC5 b4efccce5773c4b59a221a2b4356eb8c F2915457AAC19FDAEDB6AB41DA051D1E
+    // toMd5('12345');
+    return;
   }
 
   async function testFunction() {
-    // console.log('testFunction  =================++>');
-    // const ouv_caisse = await ouvertureCaisse(data.cloture, data.ouverturesTiroir);
-    // console.log({ ouv_caisse });
-    // return ouv_caisse;
+    // =========================== Articles ==================================
+    const article_by_code_query = {
+      // query: '0',
+      // // query: '9',
+      // where: ['code_barre'],
+      // like: true,
+      // // where: ['code_barre'],
+      limit: 100,
+    };
+    const article = await getArticlesByCodeBarres(article_by_code_query);
+    console.log({ article });
 
-    // const sychro = await synchroUp();
-    // console.log({ sychro });
-    // return sychro;
-
-    // const cloture = await checkCloture();
-    // console.log({ cloture });
-    // return cloture;
-
-    // Tickets ==================================
-    // const ticket = await insertTickets(data.ticket);
-    // console.log({ ticket });
-    // // return ticket;
-    // const tickets = await getTickets(0);
-    // console.log({ tickets });
-    // return ticket;
   }
-
-  console.log({ request: request.flag });
 
   return (
     <ScrollView>
@@ -96,17 +111,17 @@ export const ScanScreen: React.FunctionComponent<IProps> = function (props) {
           }}>
           <View style={{ padding: 20 }}>
             <Button
-              title="Test_Func"
+              title='Test_Func'
               onPress={async () => await testFunction()}
             />
             <View style={{ height: 5 }} />
             <Button
-              title="Count"
+              title='Count'
               onPress={async () => await selectCounts()}
             />
             <View style={{ height: 5 }} />
             <Button
-              title="Login"
+              title='Login'
               onPress={() => navigation.navigate('Login')}
             />
             <View style={{ height: 5 }} />
@@ -122,7 +137,7 @@ export const ScanScreen: React.FunctionComponent<IProps> = function (props) {
             <Text key={'table'} style={{ fontSize: 20, color: 'black' }}>{'lines'} : {linesInsert}</Text>
             <TextInput
               value={lastFileName}
-              onChangeText={(name) => setFileLaste(name)}
+              // onChangeText={(name) => setFileLaste(name)}
               style={{
                 // height: 25,
                 width: Dimensions.get('window').width - 40, fontSize: 25,
@@ -134,7 +149,7 @@ export const ScanScreen: React.FunctionComponent<IProps> = function (props) {
               }}
             />
             {counts.map(({ count, table }) => <Text key={table} style={{ fontSize: 20, color: 'black' }}>{table} : {count}</Text>)}
-            
+
           </View>
         </View>
       </SafeAreaView>

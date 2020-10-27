@@ -16,7 +16,7 @@ const TextWithResult : React.FunctionComponent<Props> = function (props) {
     
     <View style={styles.container}>
         <Text style={styles.txtstyle}>{message}</Text>
-        <Text> {result}</Text>
+        <Text style={styles.txtResult}> {result}</Text>
     </View>
 
   
@@ -29,14 +29,14 @@ const styles = StyleSheet.create({
     
   },
   txtstyle:{
-      fontSize:14,
+      fontSize:11,
       fontStyle:'normal',
       fontWeight:'bold',
       color:'#3928A6'
       
   },
   txtResult:{
-    fontSize:14,
+    fontSize:11,
     fontStyle:'normal',
     fontWeight:'bold',
     color:'#000000'

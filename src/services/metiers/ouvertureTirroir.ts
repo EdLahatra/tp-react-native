@@ -18,7 +18,7 @@ export function useAppOuverturesTiroir() {
 
   useEffect(() => {
     // refreshListOfLists();
-    // getInsertLastFileDown();
+    // getInsertSynchroDownFileCSV();
   }, []);
 
   async function getOuverturesTiroirs(query: string) {

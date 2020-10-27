@@ -6,6 +6,8 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import { RootState } from '../../services/redux/reducers';
 
 import {StackParams} from '../../presentations/navigation';
+import { setTicketsAction } from '../../services/redux/tickets/actions';
+import { toDatetimeDisplay } from '../../services/utils';
 
 type NavigationProps = StackNavigationProp<StackParams, 'HistoriqueTicket'>;
 
@@ -29,14 +31,14 @@ export default class HistoriqueTicketController extends React.Component<Props,St
 }
 
 const mapStateToProps = (state: RootState) => ({
-	
+	tickets: state.tickets,
 })
 
 const mapDispatchToProps = (
   dispatch: ThunkDispatch<any, any, AnyAction>
 ) => {
   return {
-    
+    setTickets: (payload) => dispatch(setTicketsAction(payload)),
   };
 };
 

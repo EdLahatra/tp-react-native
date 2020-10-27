@@ -26,13 +26,13 @@ INSERT INTO Articles(
 
 const insertClient = `
 INSERT INTO Clients(
+  date_creation,
+  date_modification,
   id_client,
   nom,
   prenom,
   telephone,
   user_createur,
-  date_creation,
-  date_modification,
   salarie,
   code_pin,
   remise_permanente,
@@ -91,6 +91,10 @@ INSERT INTO Clients(
 const requete = "INSERT INTO Utilisateurs (date_creation, date_modif, date_naissance, derniere_connexion, droit_abandon, droit_admin, droit_avoir, droit_avoir_force, droit_cloture_sans_decompte, droit_fermeture, droit_kdo_force, droit_manager, droit_ouverture, droit_ouverture_tiroir, droit_remise1, droit_remise2, droit_remise3, droit_retour, droit_retour_force, droit_vente, droit_rembourse_esp, nom, nom_user, numero_tel, passwd, prenom) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
 export const toClients = (cols: any) => {
+  // ncli.id_client = cols[2];
+  // ncli.nom = cols[3];
+  // ncli.prenom = cols[4];
+  // ncli.telephone = cols[5];
   const values = [
     cols[0],
     cols[1],
@@ -250,16 +254,18 @@ INSERT INTO ArticlesCodesBarres(code_barre, article_code_article) VALUES (?,?);
 `;
 
 export const toArticlesCodesBarre = (cols: any) => {
-  if(!cols || cols.length !== 2 || cols[0].length < 5) {
-    return {};
-  }
-  return {
-    requete: insertArticlesCodesBarres,
-    values: {
+  console.log('toArticlesCodesBarre ==============================>', cols)
+  if(cols && cols[0] && cols[1] && cols.length > 1) {
+    const code_barre = {
       code_barre: cols[0],
       article_code_article: cols[1],
-    },
+    };
+    return {
+      requete: insertArticlesCodesBarres,
+      values: Object.values(code_barre),
+    }
   }
+  return {};
 }
 
 const insertModesReglementsVerifs = `
@@ -270,13 +276,14 @@ export const toModesReglementsVerifs = (cols: any) => {
   if(!cols || cols.length < 3) {
     return {};
   }
+  const reglementsV = {
+    type_carte: cols[0],
+    id_carte: cols[1],
+    date_modif: cols[2],
+  }
   return {
     requete: insertModesReglementsVerifs,
-    values: {
-      type_carte: cols[0],
-      id_carte: cols[1],
-      date_modif: cols[2],
-    },
+    values: Object.values(reglementsV),
   }
 }
 
@@ -317,7 +324,7 @@ export const toMagasin = (cols: any) => {
   }
 
   return {
-    values,
+    values: Object.values(values),
     requete: insertMagasin,
   }
 };
@@ -339,18 +346,19 @@ export  const toMessages = (cols: any) => {
   if (!cols || cols < 8) {
     return [];
   }
+  const values = {
+    contenu: cols[0],
+    date_creation: cols[1],
+    date_lecture: cols[2],
+    date_modification: cols[3],
+    destination: cols[4],
+    source: cols[6],
+    usr_destination: cols[7],
+    usr_source: cols[8],
+  }
   return {
     requete: insertMessage,
-    values: {
-      contenu: cols[0],
-      date_creation: cols[1],
-      date_lecture: cols[2],
-      date_modification: cols[3],
-      destination: cols[4],
-      source: cols[6],
-      usr_destination: cols[7],
-      usr_source: cols[8],
-    }
+    values: Object.values(values),
   }
 };
 
@@ -390,7 +398,7 @@ export const toModesReglements = (cols: any) => {
   }
 
   return {
-    values,
+    values: Object.values(values),
     requete: insertModesReglements,
   }
 }
@@ -423,16 +431,17 @@ export  const toMotifsRemises = (cols: any) => {
   if (!cols || !cols[0] || cols.length < 4) {
     return [];
   }
+  const values = {
+    date_modification: cols[0],
+    id_motif_remise: cols[1],
+    libelle_complet: cols[2],
+    libelle_impression: cols[3],
+    niveau_droit: cols[4],
+    pourcent_remise_max: cols[5],
+  }
   return {
     requete: insertMotifsRemises,
-    values: {
-      date_modification: cols[0],
-      id_motif_remise: cols[1],
-      libelle_complet: cols[2],
-      libelle_impression: cols[3],
-      niveau_droit: cols[4],
-      pourcent_remise_max: cols[5],
-    }
+    values: Object.values(values),
   }
 };
 
@@ -443,14 +452,15 @@ INSERT INTO Parametres (Caisse, Variable, Enseigne, CodeMag) VALUES (?,?,?,?);
 
 export  const toParametres = (cols: any) => {
   if (cols && cols.length > 2) {
+    const values = {
+      Caisse: cols[3],
+      Variable: cols[0],
+      Enseigne: cols[1],
+      CodeMag: cols[2],
+    }
     return {
       requete: insertParametre,
-      values: {
-        Caisse: cols[3],
-        Variable: cols[0],
-        Enseigne: cols[1],
-        CodeMag: cols[2],
-      }
+      values: Object.values(values),
     }
   }
   return [];
@@ -497,36 +507,37 @@ INSERT INTO Promos(
 `;
 
 export  const toPromo = (cols: any) => {
+  const values = {
+    id_promo: cols[0],
+    code_magasin: cols[1],
+    date_debut: cols[2],
+    date_fin: cols[3],
+    montant_remise: cols[4],
+    pourcent_remise: cols[5],
+    montant_cible: cols[6],
+    quantite_requise: cols[7],
+    lot_ref1: cols[8],
+    lot_ref2: cols[9],
+    lot_ref3: cols[10],
+    lot_ref4: cols[11],
+    lot_ref5: cols[12],
+    lot_ref6: cols[13],
+    lot_ref7: cols[14],
+    lot_ref8: cols[15],
+    lot_ref9: cols[16],
+    lot_ref10: cols[17],
+    lot_ref11: cols[18],
+    lot_ref12: cols[19],
+    lot_ref13: cols[20],
+    lot_ref14: cols[21],
+    lot_ref15: cols[22],
+    designation: cols[23],
+    conditions: cols[24],
+    message_client: cols[25],
+  }
   return {
     requete: insertPromo,
-    values: {
-      id_promo: cols[0],
-      code_magasin: cols[1],
-      date_debut: cols[2],
-      date_fin: cols[3],
-      montant_remise: cols[4],
-      pourcent_remise: cols[5],
-      montant_cible: cols[6],
-      quantite_requise: cols[7],
-      lot_ref1: cols[8],
-      lot_ref2: cols[9],
-      lot_ref3: cols[10],
-      lot_ref4: cols[11],
-      lot_ref5: cols[12],
-      lot_ref6: cols[13],
-      lot_ref7: cols[14],
-      lot_ref8: cols[15],
-      lot_ref9: cols[16],
-      lot_ref10: cols[17],
-      lot_ref11: cols[18],
-      lot_ref12: cols[19],
-      lot_ref13: cols[20],
-      lot_ref14: cols[21],
-      lot_ref15: cols[22],
-      designation: cols[23],
-      conditions: cols[24],
-      message_client: cols[25],
-    }
+    values: Object.values(values),
   }
 };
 

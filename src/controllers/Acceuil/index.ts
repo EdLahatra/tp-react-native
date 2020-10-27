@@ -6,14 +6,16 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import { RootState } from '../../services/redux/reducers';
 
 import {StackParams} from '../../presentations/navigation';
+import { SystemState } from '../../services/redux/system/types';
+import { RouteProp } from '@react-navigation/native';
 
 type NavigationProps = StackNavigationProp<StackParams, 'Acceuil'>;
-
-interface Props {
-    title?: string;
-    nom?: string;
-    navigation: NavigationProps;
-  }
+type Route = RouteProp<StackParams, 'Acceuil'>;
+export interface Props {
+	system: SystemState,
+  navigation: NavigationProps;
+  route:Route;
+}
   interface State {
     number: { num: string, color: string }[];
   }
@@ -30,7 +32,7 @@ export default class AccueilController extends React.Component<Props,State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-	//produits: state.produits,
+	system: state.system,
 })
 
 const mapDispatchToProps = (

@@ -1,27 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useMetiersRequeteSQL } from './requeteSQL';
 import { tables } from '../utils';
 import { RequestDTO } from '../../dto/request';
 import { FormatData } from '../../interfaces';
 
-const { name } = tables.Tickets;
+const { name } = tables.TicketsDetail;
 
 const initial = {
   table: name,
   // columns: columns,
 };
 
-export function useAppClients() {
+export function useAppTicketsDetails() {
   
   const { selectTable, insertTable } = useMetiersRequeteSQL();
 
   useEffect(() => {
     // refreshListOfLists();
-    // getInsertLastFileDown();
+    // getInsertSynchroDownFileCSV();
   }, []);
 
-  async function getticketsDetails(query: string) {
+  async function getTicketsDetails(query: string) {
     const data = {
       query,
       // table: name,
@@ -40,37 +40,13 @@ export function useAppClients() {
   }
 
   async function insertticketsDetail(data: FormatData) {
-    // const data = {
-    //   numero_ticket: '',
-    //   numero_ligne: '',
-    //   code_article: '',
-    //   statut: '',
-    //   user_creation: '',
-    //   date_creation: '',
-    //   user_annulation: '',
-    //   date_annulation: '',
-    //   motif_annulation: '',
-    //   quantite: '',
-    //   motif_remise: '',
-    //   motif_retour: '',
-    //   complement_designation: '',
-    //   user_retour: '',
-    //   prix_base_unitaire_ttc: '',
-    //   remise_totale_ttc: '',
-    //   tva_totale: '',
-    //   prix_total_ttc: '',
-    //   motif_remise_complet: '',
-    //   envoye: '',
-    //   id_promo: ''
-    // };
-
     const newRows = await insertTable(data, name);
     console.log({ newRows });
     return newRows;
   }
 
   return {
-    getticketsDetails,
+    getTicketsDetails,
     insertticketsDetail,
   };
 }

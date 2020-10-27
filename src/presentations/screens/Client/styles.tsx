@@ -57,7 +57,7 @@ export const styles = StyleSheet.create({
         marginTop:5,
         marginStart:5,
         flex:1,
-        backgroundColor: '#859a9b',
+        backgroundColor: '#3928A6',
         borderRadius: 2,
         justifyContent: 'center',
         alignItems: 'center',
@@ -70,8 +70,8 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.35,
       },
       img:{
-        width:20,
-        height:26,
+        width:24,
+        height:24,
        
       },
      

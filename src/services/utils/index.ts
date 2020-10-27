@@ -6,6 +6,8 @@ import transformString from './convert';
 import { post } from '../technique/api';
 
 import config from '../../data/config';
+import { getStoredState } from 'redux-persist';
+import { format } from "date-fns";
 
 const { urlGetZip } = config;
 
@@ -57,7 +59,7 @@ export const tables_synchro_up = {
     name: 'TicketsDetail',
   },
   TicketsPaiements: {
-    name: 'TicketsPaiements',
+    names: 'TicketsPaiements',
   },
 };
 
@@ -80,9 +82,9 @@ export const tables = {
   ...tables_synchro_up,
 };
 
-export const ckeckFile = async (file: string, path: string) => {
-  console.log(file);
-
+export const ckeckFile = async (filename: string, path: string) => {
+	const fl = filename.split('_');
+	const file = fl[fl.length - 1];
   if (file === fileN.articles) {
     return {
       path,
@@ -176,9 +178,9 @@ export const ckeckFile = async (file: string, path: string) => {
       name: 'Utilisateurs',
       transform: transformString.Utilisateurs,
     };
-  }
-  const rm = await RNFS.unlink(path);
-  console.log({ rm });
+	}
+
+  await RNFS.unlink(path);
   return null;
 };
 
@@ -194,51 +196,88 @@ export const getFileToString = async (csvFilePath: string) => {
 };
 
 export const getZipFile = async (name = '20200121_153346_hap') => {
-  const res = await RNFetchBlob
+  try {
+    const res = await RNFetchBlob
     .config({ fileCache: true, path: `${temp}/${name}.zip` })
     .fetch('GET', urlGetZip(name), {});
-  console.log({ res });
-
-  if(res) {
-    return res.path();
+    if(res) {
+      return res.path();
+    }
+    return null;
+  } catch (error) {
+    return null;
   }
-  return null;
+}
+
+export const readDirAndCopy = async (pathFile: string, folder: string) => {
+	const dir = await RNFS.readDir(pathFile);
+	if (dir) {
+		const dirs = dir.map(async ({ name, path }) => {
+			const isFile = Object.values(fileN).includes(name);
+			if(isFile) {
+				const dest = `${temp}/${folder}_${name}`;
+				await RNFS.moveFile(path, dest);
+				return;
+			}
+			await RNFS.unlink(path);
+			return null
+    });
+    // console.log({ dirs })
+    const results = await Promise.all(dirs).then((res) => {
+      return res ? res.filter(k => k !== null) : [];
+		}).catch(() => []);
+		await RNFS.unlink(pathFile);
+		// console.log({ results });
+		return results;
+	}
+	return [];
 }
 
 export const unzipFile = async (name: string) => {
   const sourcePath = `${temp}/${name}.zip`;
   // const sourcePath = `${res.path()}/20191119_161550_hap.zip`
-  // const targetPath = `${temp}`;
+  const targetPath = `${temp}/${name}`;
   const charset = 'UTF-8';
 
-  // await RNFS.mkdir(targetPath);
+  await RNFS.mkdir(targetPath);
   // charset possible values: UTF-8, GBK, US-ASCII and so on. If none was passed, default value is UTF-8
 
-  const zipFiles = await unzip(sourcePath, temp, charset);
-  if (zipFiles) {
-    const removeZip = await RNFS.unlink(sourcePath);
-    console.log({ removeZip });
+	const zipFiles = await unzip(sourcePath, targetPath, charset);
+	const files = await readDirAndCopy(zipFiles, name);
+	if (files) {
+    await RNFS.unlink(sourcePath);
     return zipFiles;
   }
+  // if (zipFiles) {
+  //   await RNFS.unlink(sourcePath);
+  //   return zipFiles;
+  // }
   return null;
 }
 
 export const ckeckCSVName = async (targetPath: string) => {
+  const isDir = await RNFetchBlob.fs.isDir(targetPath);
+  if(!isDir) {
+    return [];
+  }
+
   const dir = await RNFS.readDir(targetPath);
-  console.log({ dir });
-  if(dir){
+  if(dir && dir.length > 0){
     const dirs = dir.map(async ({ path, name, size }) => {
       // console.log({ name, path });
       const curent = await ckeckFile(name, path);
-      // console.log({ curent });
+			// console.log({ curent });
+			if(size == "19008732") {
+				return null;
+			}
+
       if(curent) {
-        return { size, ...curent };
+        return { size, filename: name, ...curent };
       }
       return null;
     });
     // console.log({ dirs })
     return Promise.all(dirs).then((res) => {
-      console.log({ res });
       return res ? res.filter(k => k !== null) : [];
     }).catch(() => []);
   }
@@ -246,15 +285,26 @@ export const ckeckCSVName = async (targetPath: string) => {
   return [];
 }
 
-export const synchroOneToOne = async (file: string) => {
+export const lastSynchroFile = async (file: string) => {
   const filesOld = await ckeckCSVName(temp);
-  console.log({ filesOld });
   if(filesOld && filesOld.length > 0) {
     return {
       zip_name: file,
       files: filesOld,
     };
   }
+  return {};
+}
+
+export const synchroOneToOne = async (file: string) => {
+  const filesOld = await ckeckCSVName(temp);
+  if(filesOld && filesOld.length > 0) {
+    return {
+      zip_name: file,
+      files: filesOld,
+    };
+  }
+
   const nameLastFile = file && typeof file === 'string' && file.length > 10 ? file : 'no%20file';
   const filename = await post(nameLastFile);
   if (filename && filename.data && filename.data !== 'no update') {
@@ -280,4 +330,14 @@ export const synchroOneToOne = async (file: string) => {
   };
 }
 
-export const toDatetime = (date: Date) => new Date(date).toTimeString();
+export const toDatetime = (date: Date) => (((new Date(date)).getTime() * 10000) + 621355968000000000);
+
+export const toDatetimeDisplay = (date: number) => new Date((date - 621355968000000000) / 10000);
+
+export const  displayDate =  (date : number) =>{
+ return format(toDatetimeDisplay(date),"dd/MM/yyyy");
+}
+
+export const displayHour = (date : number) =>{
+  return format(toDatetimeDisplay(date),"HH:mm");
+}

@@ -1,11 +1,11 @@
 import React from 'react';
 import {Image,TextInput, View,Text,Dimensions, GestureResponderEvent} from 'react-native';
 import {styles} from './styles';
-import { FlatGrid } from 'react-native-super-grid';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+
 interface Props {
-    goto:() => void;
+    goto:(text: string) => boolean;
   }
   
   interface State {
@@ -53,15 +53,18 @@ export class Keyboard extends React.Component<Props,State> {
         
     }
     delete(){
-        var str1 = this.state.password.replace(/.$/,'');
+        
         this.setState({
-            password: str1
+            password: ''
             });
     }
-    goToHome(pwd:string){
+    
+    async goToHome(pwd: string){
+
+        const ok = await this.props.goto(pwd);
+        console.log('ok', ok);
         //check dans la base
-        if(pwd == '123'){
-            this.props.goto();
+        if(ok){
         }else{
             this.setState({issuccess:false});
         }
@@ -80,16 +83,20 @@ export class Keyboard extends React.Component<Props,State> {
                 secureTextEntry
                 value={this.state.password}
                 onChangeText={(text) => this.handleEmail(text)}
-                placeholder='Entrer mot de passe'/>
+                onSubmitEditing={ () => this.goToHome(this.state.password)}
+                returnKeyType='go'
+                placeholder='Entrer mot de passe'>
+                  
+                </TextInput>
              <TouchableOpacity style={styles.button} onPress={() => this.delete()}  >
             
-                <Image style={styles.img} source={require("../../resources/images/flash.png")}/>
+                <Image style={styles.img} source={require("../../resources/images/clear.png")}/>
         
             </TouchableOpacity>
             </View>
            
             {!this.state.issuccess && ( <Text style={{marginStart:10,fontSize:8, color:"#EB5757"}}>Error</Text>)}
-            <View style={styles.txtContainer}>
+           {/* <View style={styles.txtContainer}>
                     <FlatGrid
                 itemDimension={55}
                 data={this.state.number}
@@ -118,7 +125,7 @@ export class Keyboard extends React.Component<Props,State> {
                     </TouchableOpacity>
                 )}
                 />
-            </View>
+                </View> */}
 </View>
            
 

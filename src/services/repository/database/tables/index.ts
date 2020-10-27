@@ -61,7 +61,7 @@ export default {
     [sexe_enfant3] [char](1) NULL,
     [sexe_enfant4] [char](1) NULL,
     [sexe] [char](1) NULL,
-    [synchro_up] [bit] NULL
+    [synchro_up] [bit] DEFAULT 0 NOT NULL
   );
   `,
 
@@ -237,12 +237,15 @@ export default {
   );
   `,
   
-  LastFileDown: `
-  CREATE TABLE IF NOT EXISTS LastFileDown(
+  SynchroDownFileCSV: `
+  CREATE TABLE IF NOT EXISTS SynchroDownFileCSV(
     [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+    [lines] [int] NULL,
     [name] [varchar](50) NULL,
     [size] [int] NULL,
-    [date] [int] NULL
+    [date] [int] NULL,
+    [numero_line] [int] NULL,
+    [fin] [int] NULL
   );
   `,
 
@@ -291,7 +294,7 @@ export default {
     [date_fin] [datetime] NULL,
     [id_cloture] [varchar](17) NULL,
     [vendeurs] [varchar](92) NULL,
-    [synchro_up] [bit] NULL
+    [synchro_up] [bit] DEFAULT 0 NOT NULL
   )
 `,
 
@@ -319,7 +322,7 @@ export default {
     [motif_remise_complet] [nvarchar](50) NULL,
     [envoye] [bit] NULL,
     [id_promo] [int] NULL,
-    [synchro_up] [bit] NULL
+    [synchro_up] [bit] DEFAULT 0 NOT NULL
     )
 `,
 
@@ -335,7 +338,7 @@ export default {
     [user_annulation] [varchar](30) NULL,
     [date_annulation] [datetime] NULL,
     [motif_annulation] [nvarchar](50) NULL,
-    [synchro_up] [bit] NULL
+    [synchro_up] [bit] DEFAULT 0 NOT NULL
     )
   `,
 
@@ -429,7 +432,7 @@ export default {
     [responsable_ecart1] [varchar](30) NULL,
     [responsable_ecart2] [varchar](30) NULL,
     [responsable_ecart3] [varchar](30) NULL,
-    [synchro_up] [bit] NULL
+    [synchro_up] [bit] DEFAULT 0 NOT NULL
     )
   `,
 
@@ -448,7 +451,7 @@ export default {
     [num_ticket_debut] [varchar](12) NULL,
     [num_ticket_fin] [varchar](12) NULL,
     [integrite_ok] [bit] NULL,
-    [synchro_up] [bit] NULL
+    [synchro_up] [bit] DEFAULT 0 NOT NULL
   )
 `,
 
@@ -461,7 +464,7 @@ export default {
     [numero_moyen_paiement] [varchar](50) NULL,
     [info] [varchar](50) NULL,
     [montant] [money] NULL,
-    [synchro_up] [bit] NULL
+    [synchro_up] [bit] DEFAULT 0 NOT NULL
   )
 `,
 
@@ -480,7 +483,7 @@ export default {
     [ca_total] [money] NULL,
     [num_ticket_debut] [varchar](12) NULL,
     [num_ticket_fin] [varchar](12) NULL,
-    [synchro_up] [bit] NULL
+    [synchro_up] [bit] DEFAULT 0 NOT NULL
   )
   `,
 
@@ -525,7 +528,7 @@ export default {
     [nb_8_reel] [smallint] NULL,
     [nb_8_theo] [smallint] NULL,
     [ecart] [bit] NOT NULL,
-    [synchro_up] [bit] NULL
+    [synchro_up] [bit] DEFAULT 0 NOT NULL
   )
   `,
 
@@ -536,7 +539,7 @@ export default {
     [date] [datetime] NULL,
     [lieu] [nvarchar](5) NULL,
     [type_mouvement] [nvarchar](3) NULL,
-    [synchro_up] [bit] NULL
+    [synchro_up] [bit] DEFAULT 0 NOT NULL
   )
 `,
 
@@ -564,7 +567,7 @@ export default {
     [caisse_depot] [varchar](10) NULL,
     [no_bordereau] [varchar](13) NULL,
     [id_cloture] [varchar](17) NULL,
-    [synchro_up] [bit] NULL
+    [synchro_up] [bit] DEFAULT 0 NOT NULL
   )
   `,
 

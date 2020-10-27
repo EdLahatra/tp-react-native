@@ -1,38 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useMetiersRequeteSQL } from './requeteSQL';
 import { tables } from '../utils';
-import { RequestDTO } from '../../dto/request';
 
 const table = tables.Clients.name;
 
-export function useAppClients() {
+export function useMetierClients() { 
   
-  const { selectTable } = useMetiersRequeteSQL();
+  const { findTable } = useMetiersRequeteSQL();
 
   useEffect(() => {
     // refreshListOfLists();
-    // getInsertLastFileDown();
+    // getInsertSynchroDownFileCSV();
   }, []);
 
-  async function getClients(query: string) {
-    const data = {
-      query,
-      table,
-      where: ['code', 'prenom'],
-      like: true,
-      operator: 'OR',
-      limit: 20,
-    };
-
-    const request = new RequestDTO(data).generateRequestSelect();
-
-    const res = await selectTable(request);
-    console.log({ res });
+  async function getClientsDB(data: any) {
+    const res = await findTable({ ...data, table });
     return res;
   } 
 
   return {
-    getClients,
+    getClientsDB,
   };
 }

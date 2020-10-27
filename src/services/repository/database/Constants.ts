@@ -1,8 +1,3 @@
-/**
- * React Native SQLite Demo
- * Copyright (c) 2018-2020 Bruce Lefebvre <bruce@brucelefebvre.com>
- * https://github.com/blefebvre/react-native-sqlite-demo/blob/master/LICENSE
- */
 export const DATABASE = {
   FILE_NAME: "AppDatabase.db",
   BACKUP_FILE_NAME: "AppDatabase_Backup.db",
@@ -20,5 +15,15 @@ export const STRING = {
   MENU_ART_SPEC:"Articles spéciaux",
   MENU_ATTENTE:"Mettre en attente",
   MENU_ANN_VENTE:"Annuler vente",
+  MENU_METHODE_PAIE:"Méthode de paiement",
+
+  REMISE_PROMO:"Code promo",
+  REMISE_PANIER:"Remise panier",
+  REMISE_ART:"Remise article",
+  CARTE_BLEUE:"Carte bleue",
+  CARTE_MODE:"Carte mode",
+  CARTE_CADO:"Carte cadeau",
+  CARTE_AVOIR:"Avoir"
+
   
 }

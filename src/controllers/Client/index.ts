@@ -6,12 +6,13 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import { RootState } from '../../services/redux/reducers';
 
 import {StackParams} from '../../presentations/navigation';
+import { SystemState } from '../../services/redux/system/types';
 // import { getClients } from '../../services/applicatif/clients';
 
 type NavigationProps = StackNavigationProp<StackParams, 'Client'>;
 
 export interface Props {
-    
+		system: SystemState,
     navigation: NavigationProps;
   }
   interface State {
@@ -35,7 +36,7 @@ export default class ClientController extends React.Component<Props,State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-	
+	system: state.system,
 })
 
 const mapDispatchToProps = (

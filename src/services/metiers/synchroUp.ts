@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useDatabase } from '../../context/DatabaseContext';
 import { RequestDTO } from '../../dto/request';
-import { post } from '../bdl/api';
+import { post, post2 } from '../bdl/api';
 import { cle_serveur, code_mag, numero_caisse } from '../../data/faker';
 
-const toUrlData = (str: string) => str.replace(' ', '%20');
+const toUrlData = (str: any) => str && str.length > 0 ? str.replace(' ', '%20') : 'null';
+
+const toUrlDataObject = (str: any) => str && str.length > 0 ? str.replace(' ', '%20') : 'null';
 
 export const actionType = (table: string) => {
   switch (table) {
@@ -21,7 +23,7 @@ export const actionType = (table: string) => {
     case 'Utilisateurs':
       return 'utilisateur';
     case 'Clotures':
-      return 'cloture';
+      return 'cloture2';
     case 'Pointages':
       return 'pointage';
     case 'CloturesDetailsPaiement':
@@ -36,12 +38,12 @@ export function useMetiersSynchroUp() {
 
   useEffect(() => {
     // refreshListOfLists();
-    // getInsertLastFileDown();
+    // getInsertSynchroDownFileCSV();
   }, []);
 
   async function updated(table: string, id: string) {
-    const sqlRequest = `UPDATE ${table} SET synchro_up = ? WHERE id = ?;`;
-    return await database.updateTable(sqlRequest, [id,'1']);
+    const sqlRequest = `UPDATE ${table} SET synchro_up = 1 WHERE id = ${id};`;
+    return await database.updateTable(sqlRequest, []);
   }
 
   async function recursiveSynchroUp(sqlRequest: string, table: string, res: any[]) {
@@ -50,16 +52,32 @@ export function useMetiersSynchroUp() {
     console.log({ list });
     if (list && list.length) {
       const newRes = list.map(async ({ id, synchro_up, ...row }) => {
-        const dataApi = Object.keys(row).map((key) => `${key}=${toUrlData(row[key])}`).join('&');
-        const isClient = table === 'Clients' ? `code_mag=${code_mag}&numero_caisse=${numero_caisse}&` : '';
-        const keys = `action${actionType(table)}&cle_serveur=${cle_serveur}&${isClient}`;
-        const api = await post(keys + dataApi);
-        if(api && api.data) {
+				console.log({ row });
+        const dataApi = Object.keys(row).map((key) => `${key}=${typeof row[key] === 'number' ? row[key] : toUrlData(row[key])}`).join('&');
+        // const dataApi = Object.keys(row).reduce((acc, key) => {
+        //   return { ...acc, [key]: row[key] && (row[key].length > 0 || row[key] > 0) ? row[key] : null }
+        // }, {});
+        const isClient = table !== 'Clotures' ? `code_mag=${code_mag}&` : '';
+        const data = `action=${actionType(table)}&numero_caisse=${numero_caisse}&cle_serveur=${cle_serveur}&${isClient}${dataApi}`;
+        // const data = {
+        //   ...dataApi,
+        //   action: actionType(table),
+        //   code_mag,
+        //   numero_caisse,
+        //   cle_serveur,
+        // }
+        console.log({ data });
+        const api = await post(data);
+        // const api = await post2(data);
+				console.log({ api, data });
+        if(api && api.data === 'ok') {
           updated(table, id);
         }
-      });
-      results = [...res, ...newRes];
-      await recursiveSynchroUp(sqlRequest, table, results)
+			});
+			const test = await Promise.all(newRes);
+			console.log({ test });
+      results = [...res, ...test];
+      // await recursiveSynchroUp(sqlRequest, table, results)
     }
     return results;
   }
@@ -74,11 +92,13 @@ export function useMetiersSynchroUp() {
         limit: 50,
       };
     const sqlRequest = new RequestDTO(data).generateRequestSelect();
+
     const results = await recursiveSynchroUp(sqlRequest, table, []);
     return results;
   }
 
   return {
     synchroUpMetiers,
+    updated,
   };
 }

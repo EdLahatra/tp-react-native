@@ -3,8 +3,10 @@ import { useState, useEffect } from 'react';
 import { useMetiersRequeteSQL } from './requeteSQL';
 import { tables } from '../utils';
 import { RequestDTO } from '../../dto/request';
+import { FormatData } from '../../interfaces';
 
 const { name } = tables.Tickets;
+const { names } = tables.TicketsPaiements;
 
 const initial = {
   table: name,
@@ -13,14 +15,14 @@ const initial = {
 
 export function useAppTicketsPaiements() {
   
-  const { selectTable, insertTable } = useMetiersRequeteSQL();
+  const { selectTable, insertTable , findTable} = useMetiersRequeteSQL();
 
   useEffect(() => {
     // refreshListOfLists();
-    // getInsertLastFileDown();
+    // getInsertSynchroDownFileCSV();
   }, []);
 
-  async function getTicketsPaiement(query: string) {
+  async function getTicketsPaiement(query: any) {
     const data = {
       query,
       // table: name,
@@ -32,13 +34,19 @@ export function useAppTicketsPaiements() {
     };
 
     const request = new RequestDTO(data).generateRequestSelect();
-
     const res = await selectTable(request);
     console.log({ res });
     return res;
   }
 
-  async function insertTicketsPaiement(data: { [s: string]: string; }) {
+  async function findTicketsPaiement(data: any) {
+
+    const res = await findTable({ ...data, table : name });
+    console.log({ res });
+    return res;
+  }
+
+  async function insertTicketsPaiement(data: FormatData) {
     // const data = {
       // numero_ticket: '',
       // numero_ligne: '',
@@ -51,7 +59,7 @@ export function useAppTicketsPaiements() {
       // motif_annulation: '',
     // };
 
-    const newRows = await insertTable(data, name);
+    const newRows = await insertTable(data, names);
     console.log({ newRows });
     return newRows;
   }
@@ -59,5 +67,6 @@ export function useAppTicketsPaiements() {
   return {
     getTicketsPaiement,
     insertTicketsPaiement,
+    findTicketsPaiement
   };
 }

@@ -1,92 +1,63 @@
 import React , { useState, useEffect } from 'react';
 import { View,TouchableOpacity , Text, TextInput,Image, ListItem, FlatList} from 'react-native';
 import ClientController, { reduxConnect, Props } from '../../../controllers/Client';
+import HeaderClient from '../../components/Client/HeaderClient';
 
 import {styles} from './styles';
+import { useAppClients } from '../../../services/applicatif/clients';
+import { ClientI } from '../../../interfaces';
+import ItemClient from '../../components/Client/ItemClient';
 
-import { useAppClients } from '../../../services/metiers/clients';
+function renderSeparatorView(){
+    return (
+      <View style={{
+          height: 1, 
+          width: "100%",
+          backgroundColor: "#CEDCCE",
+        }}
+      />
+    );
+  };
 
-/*class ClientScreen extends ClientController {
-    componentDidMount() {
+export const ClientScreen: React.FunctionComponent<Props> = function (props) {
+    const { navigation } = props;
+    const [clients, setclients] = useState< Array<ClientI>>();
+    const [valueInput, setValueInput] = useState('');
+   const { getClients } = useAppClients();
+
+    useEffect(() => {
+         //getClients();
+      }, []);
+
+
+    /*function getClients(){
         let clients: { name: string, phone: string, group: string }[] =[
             { name : "Baba", phone :"0621458543", group :"-"},
             { name : "Baba1", phone :"0621458543", group :"-"},
             { name : "Baba2", phone :"0621458543", group :"-"},
             { name : "Baba3", phone :"0621458543", group :"-"},
           ];
-         this.setState({clients});
+          setclients(clients);
+    }*/
+     async function searchClient(value:string){
+        const queryClient = {
+            query: value,
+            where: ['nom', 'prenom', 'telephone', 'numero_carte'],
+            like: true,
+            operator: 'OR',
+            limit: 10,
+          };
+          const client: Array<ClientI> = await getClients(queryClient);
 
-        // this.getClientList();
-    }
-    render(){
-        return (
-            <View style={styles.container}>
-               <View style={styles.linearclientheader}>
-                 <Text style={styles.txtTitle}>Recherche(nom / numéro tel / code carte) client</Text>
-                 <View style={styles.edtStyleCli}>
-                    <TextInput
-                        style={styles.inputname}
-                        multiline={false}
-                        autoCorrect={false}
-                        autoCapitalize='none'
-                        keyboardType='numeric'
-                        placeholder=''/>
-                    
-                    <TouchableOpacity style={styles.button}>
-            
-                        <Image style={styles.img} source={require("../../resources/images/flash.png")}/>
-    
-                     </TouchableOpacity>
-                 </View>
-                    
-               </View>
-               <FlatList          
-                    data={this.state.clients}  
-                    keyExtractor={(_, index) => index.toString()}        
-                    renderItem={({ item }) => ( 
-                        <View style={{flex:1 , flexDirection: 'row' , justifyContent:'space-between'}} >
-                            <Text>{item.name}</Text>
-                            <Text>{item.phone}</Text>
-                            <Text>{item.group}</Text>
-                            <TouchableOpacity style={styles.button} 
-                                onPress={() => { 
-                                    this.props.navigation.navigate('FicheClient' ,{
-                                        client: item
-                                      });
-                                }}>
-                                <Image style={styles.img} source={require("../../resources/images/flash.png")}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.button} >
-                                <Image style={styles.img} source={require("../../resources/images/flash.png")}/>
-                            </TouchableOpacity>
-                        </View>
-                    )}                                  
-                    />   
-            </View>
-        )
-    }
-}*/
+          setclients(client);
+     }
+     function goToFicheClient(clientItem:ClientI){
+        navigation.navigate("FicheClient", {client : clientItem});
+     }
+     function validClient(clientItem:ClientI){
+        navigation.navigate("Encaissement",{clientI:clientItem,fromHome:false});
+     }
 
-export const ClientScreen: React.FunctionComponent<Props> = function (props) {
-    const { navigation } = props;
-    const [clients, setclients] = useState<{ name: string, phone: string, group: string }[]>([]);
-
-    const { getClients } = useAppClients();
-    useEffect(() => {
-        // getClients();
-      }, []);
-
-    // function getClients(){
-    //     let res: { name: string, phone: string, group: string }[] =[
-    //         { name : "Baba", phone :"0621458543", group :"-"},
-    //         { name : "Baba1", phone :"0621458543", group :"-"},
-    //         { name : "Baba2", phone :"0621458543", group :"-"},
-    //         { name : "Baba3", phone :"0621458543", group :"-"},
-    //       ];
-    //       setclients(res);
-    //     //  this.setState({clients});
-    // }
-    
     return (
         <View style={styles.container}>
             <View style={styles.linearclientheader}>
@@ -97,39 +68,29 @@ export const ClientScreen: React.FunctionComponent<Props> = function (props) {
                     multiline={false}
                     autoCorrect={false}
                     autoCapitalize='none'
-                    keyboardType='numeric'
+                    keyboardType='default'
+                    onChangeText={(value) => setValueInput(value)}
+                    value={valueInput}
                     placeholder=''/>
                 
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => searchClient(valueInput)}>
         
-                    <Image style={styles.img} source={require("../../resources/images/flash.png")}/>
+                    <Image style={styles.img} source={require("../../resources/images/ok.png")}/>
 
                     </TouchableOpacity>
                 </View>
                 
             </View>
+            <HeaderClient/>
             <FlatList          
                 data={clients}  
-                keyExtractor={(_, index) => index.toString()}        
-                renderItem={({ item }) => ( 
-                    <View style={{flex:1 , flexDirection: 'row' , justifyContent:'space-between'}} >
-                        <Text>{item.name}</Text>
-                        <Text>{item.phone}</Text>
-                        <Text>{item.group}</Text>
-                        <TouchableOpacity style={styles.button} 
-                            onPress={() => { 
-                                navigation.navigate('FicheClient' ,{
-                                    client: item
-                                    });
-                            }}>
-                            <Image style={styles.img} source={require("../../resources/images/flash.png")}/>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} >
-                            <Image style={styles.img} source={require("../../resources/images/flash.png")}/>
-                        </TouchableOpacity>
-                    </View>
-                )}                                  
-                />   
+                keyExtractor={(_, index) => index.toString()} 
+                ItemSeparatorComponent={renderSeparatorView}       
+                renderItem={({ item }) =>
+                <ItemClient client={item} 
+                    onCheck= {() => validClient(item)} 
+                    onInfoClicked= {() => goToFicheClient(item)}/>}                                  
+            />   
         </View>
     )   
 }

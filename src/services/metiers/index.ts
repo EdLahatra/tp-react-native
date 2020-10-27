@@ -1,92 +1,43 @@
 import { useState, useEffect } from 'react';
 import { useDatabase } from '../../context/DatabaseContext';
 
-const newLine = /\r?\n/;
-const defaultFieldDelimiter = ';';
-
 export function useMetiersApp() {
   const [counts, setCounts] = useState<{
     count: any;
     table: string;
   }[]>([]);
-  const [toObj, setToObj] = useState<Function>(() => {});
-  const [flag, setFlag] = useState<boolean>(false);
   const [lastFileName, setLastFileName] = useState<string>('');
   const [linesInsert, setLinesInsert] = useState<number>(0);
-  const [lineString, setlinesString] = useState<string[]>([]);
-  const database = useDatabase();
+	const database = useDatabase();
 
   useEffect(() => {
     // refreshListOfLists();
     selectCounts();
-    getInsertLastFileDown();
-  }, []);
+    getInsertSynchroDownFileCSV();
+	}, []);
 
-  async function getInsertLastFileDown() {
-    const last = await  database.selectLastInsertFile();
-    setLastFileName(last)
-    console.log({ last });
-    return last;
+  async function getInsertSynchroDownFileCSV() {
+    const file = await  database.selectLastInsertFile();
+    setLastFileName(file.name || 'no%20file');
+    return file;
   }
 
-  async function insertLastFileDown(name: string, size: number, date: number) {
-    setLastFileName(name)
-    return await database.insertLastFileDown(name, size, date);
-  }
+  async function insertSynchroDownFileCSV(lines: number, name: string, size: string, date: number, numero_line: number) {
+    setLastFileName(name);
+    return await database.insertSynchroDownFileCSV(lines, name, size, date, numero_line);
+	}
 
-  async function requestFlagsSychro(fg: boolean) {
-    setFlag(fg);
-    if(!fg){
-      await recursiveSynchro(false, false, () => {});
-    }
-  }
+	async function checkFileSynchroDownFileCSV(name: string) {
+    return await database.checkFileSynchroDownFileCSV(name);
+	}
 
-  async function synchroDown(data: any, cb: Function) {
-
-    const { dataString, trasfomToObj } = data;
-    const lines = dataString.split(newLine);
-
-    await setlinesString(lines);
-    await setToObj(trasfomToObj);
-    await recursiveSynchro(lines, trasfomToObj, cb);
+  async function updateSynchroDownFileCSV(name: string, fin: number, numero_line: number) {
+    return await database.updateSynchroDownFileCSV(name, fin, numero_line);
   }
 
   async function insertSynchroOneToOne(reqSQL: string, values: string[]) {
     const insertOne = await database.insertSynchroOneToOne(reqSQL, values);
     return insertOne;
-  }
-
-  async function recursiveSynchro(a: any, b: any, cb: Function) {
-    let lineS = lineString;
-    let transfObject = toObj;
-    if(a && b){
-      lineS = a;
-      transfObject = b;
-    }
-    if(!lineS || lineS.length === 0){
-      return;
-    }
-    let currentLine = lineS[0].split(defaultFieldDelimiter);
-    // console.log({ currentLine });
-    let toObject = transfObject(currentLine);
-    if(toObject && toObject.requete) {
-      const { requete, values } = toObject;
-      await database.insertSynchroOneToOne(requete, values);
-      // const insertOne = await database.insertSynchroOneToOne(requete, values);
-      // console.log({ insertOne });
-    }
-    const nextSynchro = lineS.splice(0);
-
-    await setlinesString(nextSynchro);
-    setLinesInsert(nextSynchro.length);
-    if(!flag && nextSynchro && nextSynchro.length > 0){
-      // console.log('nextSynchro ===================>', nextSynchro.length);
-      await recursiveSynchro(false, false, cb);
-    }
-  }
-
-  async function synchroClients (dataString: string, cb: Function) {
-    await database.synchroClients(dataString, cb);
   }
 
   async function selectCounts() {
@@ -97,18 +48,22 @@ export function useMetiersApp() {
     return [];
   }
 
+  function testValue(nb: number) {
+    // console.log('nb <=======>', nb);
+    setLinesInsert(nb);
+  }
+
   return {
+    testValue,
     linesInsert,
     counts,
     lastFileName,
-    synchroClients,
     selectCounts,
-    synchroDown,
-    requestFlagsSychro,
-    recursiveSynchro,
     insertSynchroOneToOne,
-    insertLastFileDown,
-    getInsertLastFileDown,
+    insertSynchroDownFileCSV,
+    getInsertSynchroDownFileCSV,
     ouverturesCaisseMetiers,
+		updateSynchroDownFileCSV,
+		checkFileSynchroDownFileCSV,
   };
 }

@@ -1,53 +1,94 @@
 // React Native Tab
 // https://aboutreact.com/react-native-tab/
 
-import * as React from 'react';
+import React , { useState, useEffect } from 'react';
 import {
   TouchableOpacity,
   StyleSheet,
   View,
   Text,
-  SafeAreaView
+  SafeAreaView, 
+  FlatList,
+  Image
 } from 'react-native';
 
-const TicketTermineScreen = ({ navigation }) => {
-    return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={{ flex: 1 , padding: 16}}>
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text
-              style={{
-                fontSize: 25,
-                textAlign: 'center',
-                marginBottom: 16
-              }}>
-              Setting{'\n'}(You are on SecondPage)
-            </Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={
-                () => navigation.navigate('FirstPage')
-              }>
-              <Text>Go to Home Tab</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </SafeAreaView>
-    );
+import { styles } from './styles';
+import { HeaderListTicket }  from '../../../components/HistoriqueTicket/HeaderListTicket';
+import { ItemListTicketTermine }  from '../../../components/HistoriqueTicket/ItemListTicket/ItemTermine';
+import { reduxConnect } from '../../../../controllers/HistoriqueTicket';
+import { useAppTickets } from '../../../../services/applicatif/tickets';
+
+renderSeparatorView = () => {
+  return (
+    <View style={{
+        height: 1, 
+        width: "100%",
+        backgroundColor: "#CEDCCE",
+      }}
+    />
+  );
+};
+
+export const TicketTermineScreen : React.FunctionComponent<Props> = function (props) {
+  const { navigation } = props;
+  const {  getTicketsPaiements } = useAppTickets();
+
+  useEffect(() => {
+       getTicketsPaiementDB();
+    }, []);
+
+  function onEmail (ticket){
+
   }
 
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    width: 300,
-    marginTop: 16,
-  },
-});
-export default TicketTermineScreen;
+  function onCheck(ticket){
+
+  }
+
+  function filterTicketTermine(ticketList ){
+    return ticketList.filter(ticket => ticket.statut == 1);
+  }
+
+  async function getTicketsPaiementDB(){
+    console.log("props list");
+    console.log(props.tickets.list[0]);
+
+    /*const data = {
+     query: '',
+     // table: name,
+     // where: ['statut'],
+     where: ['numero_ticket'],
+     like: true,
+     // operator: 'OR',
+     limit: 200,
+     };
+   const asyncResp = await getTicketsPaiements(data);
+   console.log("TicketPaiment");
+   console.log(asyncResp);
+   if (asyncResp){
+     //props.setTickets(asyncResp);
+   }*/
+ }
+
+  return (
+    <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
+      <View style={{ flex: 1 , padding: 16}}>
+      <HeaderListTicket/>
+      { props.tickets.list && props.tickets.list.length > 0? 
+        <FlatList          
+                data={filterTicketTermine(props.tickets.list[0])}  
+                keyExtractor={(_, index) => index.toString()} 
+                ItemSeparatorComponent={renderSeparatorView}       
+                renderItem={({ item }) =>
+                <ItemListTicketTermine ticket={item} 
+                  onEmail={() => onEmail(item)}
+                  onCheck={() => onCheck(item)}/>
+              }                                  
+            /> : <View/>
+           }
+      </View>
+      
+    </SafeAreaView>
+  );
+}
+export const TicketTermine = reduxConnect(TicketTermineScreen);

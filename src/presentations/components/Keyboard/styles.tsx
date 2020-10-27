@@ -70,8 +70,8 @@ export const styles = StyleSheet.create({
   },
   button: {
     
-    backgroundColor: '#859a9b',
-    borderRadius: 2,
+    backgroundColor: '#3928A6',
+    borderRadius: 5,
     marginStart:5,
     justifyContent: 'center',
     alignItems: 'center',
@@ -85,8 +85,8 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.35,
   },
   img:{
-    width:20,
-    height:26,
+    width:24,
+    height:24,
    
   },
   input:{

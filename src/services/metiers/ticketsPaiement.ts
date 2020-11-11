@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useMetiersRequeteSQL } from './requeteSQL';
 import { tables } from '../utils';
@@ -18,8 +18,6 @@ export function useAppTicketsPaiements() {
   const { selectTable, insertTable , findTable} = useMetiersRequeteSQL();
 
   useEffect(() => {
-    // refreshListOfLists();
-    // getInsertSynchroDownFileCSV();
   }, []);
 
   async function getTicketsPaiement(query: any) {
@@ -47,18 +45,6 @@ export function useAppTicketsPaiements() {
   }
 
   async function insertTicketsPaiement(data: FormatData) {
-    // const data = {
-      // numero_ticket: '',
-      // numero_ligne: '',
-      // mode_paiement: '',
-      // montant_paiement: '',
-      // info_paiement: '',
-      // encaisse: '',
-      // user_annulation: '',
-      // date_annulation: '',
-      // motif_annulation: '',
-    // };
-
     const newRows = await insertTable(data, names);
     console.log({ newRows });
     return newRows;

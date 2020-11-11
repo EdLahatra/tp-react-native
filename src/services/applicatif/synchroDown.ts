@@ -1,11 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import RNFS from 'react-native-fs';
 
 import { AppState, AppStateStatus } from 'react-native';
 
-import { synchroOneToOne, getFileToString, lastSynchroFile } from '../utils';
+import { synchroOneToOne, getFileToStringOld, lastSynchroFile, checkSynchroDown } from '../utils';
 
 import { useMetiersApp } from '../metiers';
+
+import { store } from '../redux/store';
+import config from '../../data/config';
+import { readStream } from '../../presentations/navigation/RNFetchBlobReadStream';
+
+const system = store.getState().system;
 
 // const CryptoJS = require("crypto-js");
 
@@ -21,143 +27,117 @@ export function useAppSynchroDown() {
 	const [loadingSynchro, setLoadingSynchro] = useState(false);
 	const [lastFile, setLastFile] = useState('');
 
-  const { checkFileSynchroDownFileCSV, insertSynchroOneToOne, insertSynchroDownFileCSV, getInsertSynchroDownFileCSV, updateSynchroDownFileCSV } = useMetiersApp();
+  const { insertSynchroOneToOne, insertSynchroDownFileCSV, getInsertSynchroDownFileCSV } = useMetiersApp();
 
   appState = AppState.currentState;
-
-  // Set up a callback to fire when AppState changes (when the app goes to/from the background)
-  // useEffect(function() {
-  //   // The app is currently active, so the 'change' event will not fire and we need to
-  //   // call appIsNowRunningInForeground ourselves.
-  //   // return testComunication();
-  //   appState = 'active';
-  //   // Listen for app state changes
-  //   // AppState.addEventListener('change', handleAppStateChange);
-	// 	// return testComunication();
-  //   return function() {
-  //     // Cleanup function
-  //     // AppState.removeEventListener('change', handleAppStateChange);
-  //   };
-  // }, []);
-
-  // Handle the app going from foreground to background, and vice versa.
-  function handleAppStateChange(nextAppState: AppStateStatus) {
-    if (appState.match(/inactive|background/) && nextAppState === 'active') {
-      // App has moved from the background (or inactive) into the foreground
-      testComunication();
-		}
-		console.log({ appState });
-    appState = nextAppState;
-	}
-	
-	function testComunication() {
-		console.log(' appState =====>', appState)
-	}
-
-	async function getLastFile() {
-		const file = await getInsertSynchroDownFileCSV();
-		const { name, numero_line, fin } = file;
-		let folder = '20200928_151618_hap'; // 20200928_151618_hap 20200131_094745_hap 
-		const fld = name && name.split('hap');
-		if (fld && fld.length > 0) {
-			folder = `${fld[0]}hap`
-		}
-		return folder;
-	}
 
   async function goToSynchroDown(last_file: string | undefined) {
 		// console.log('App is now running in the foreground!', loadingSynchro);
 		if(loadingSynchro) {
 			return;
-		}
-
-    setLoadingSynchro(true);
-    const file = await getInsertSynchroDownFileCSV();
-		const { name, numero_line, fin } = file;
-		let folder = '20200928_151618_hap'; // 20200928_151618_hap 20200131_094745_hap 
-		const fld = name && name.split('hap');
-		if (fld && fld.length > 0) {
-			folder = `${fld[0]}hap`
-		}
-		if (last_file) {
-			folder = last_file;
-		}
-    if (fin == "0") {
-      await checkLastSynchroFile(folder, name, numero_line);
-    } else {
-			await recurciveGetFile(folder, '0');
-		}
-    setLoadingSynchro(false);
-  }
-
-  async function checkLastSynchroFile(folder: string, name: string, numero_line: string) {
-    const { files } = await lastSynchroFile(folder);
-		await toSynchroInDB(files || [], folder, Number(numero_line), name);
-		await goToSynchroDown(undefined);
-  }
-
-  async function toSynchroInDB(files: any[], lastFile: string, numero_line: number, name: string | undefined) {
-    const date = Math.ceil(new Date().getTime() / 1000);
-    if (files && files.length > 0) {
-      for (let index = 0; index < files.length; index++) {
-        const file = files[index];
-        if (file) {
-					const { path, transform, size, filename } = file;
-					const check = await checkFileSynchroDownFileCSV(filename);
-					if(!check || check.fin !== 1) {
-						const fileString = await getFileToString(path);
-						let lines = fileString.split(newLine);
-						if (name === filename && numero_line > 0) {
-							lines = lines.splice(0, numero_line);
-						}
-						if (check && check.numero_line > 0) {
-							lines = lines.splice(0, check.numero_line);
-						}
-						if (lines && lines.length > 0) {
-							const nb_lines = lines.length;
-							if (!check || !check.fin) {
-								await insertSynchroDownFileCSV(nb_lines, filename, size, date, nb_lines);
-							}
-							await recurciveInsert(transform, lines, lastFile, filename);
-							await updateSynchroDownFileCSV(filename, 1, 0);
-						}
-					}
-
-          await RNFS.unlink(path);
-        }
+    }
+    console.log({ system });
+    const {
+      code_mag, numero_caisse, cle_serveur
+    } = system?.params;
+    const check = await checkSynchroDown(code_mag, numero_caisse, cle_serveur);
+    console.log({ check });
+    if(check && check.data === 'yes') {
+      setLoadingSynchro(true);
+      const file = await getInsertSynchroDownFileCSV();
+      const { name, numero_line, fin } = file;
+      let folder = config.last_file;
+      const fld = name && name.split('hap');
+      if (fld && fld.length > 1) {
+        folder = `${fld[0]}hap`
       }
+      if (last_file) {
+        folder = last_file;
+      }
+      if (fin == "0") {
+        await checkLastSynchroFile(folder);
+      } else {
+        await recurciveGetFile(folder, '0');
+      }
+      setLoadingSynchro(false);
     }
   }
 
-  async function recurciveInsert(transform: Function, lines: string[], lastFile: string, filename: string) {
-    if(!lines || !lines[0]) {
-      return;
-    }
-    const currentLine = lines[0].split(defaultFieldDelimiter);
+  async function checkLastSynchroFile(folder: string) {
+    const { files } = await lastSynchroFile(folder);
+		await toSynchroInDB(files || []);
+		// await goToSynchroDown(undefined);
+  }
+
+  async function insertData(line: string, transform: any) {
+    console.log('insertData =============');
+    const currentLine = line.split(defaultFieldDelimiter);
     const currentTable = transform(currentLine);
     if (currentTable && currentTable.requete && currentTable.values) {
       const { requete, values } = currentTable;
+      console.log('transform ============= insertSynchroOneToOne', values);
       await insertSynchroOneToOne(requete, values);
     }
-    const newLines = lines.splice(1);
-    if(newLines) {
-      const md = newLines.length;
-      if(checkModulo(md)) {
-				const updt = await updateSynchroDownFileCSV(filename, 0, md);
-				if (updt) {
-					return;
-				}
-			}
-			await recurciveInsert(transform, newLines, lastFile, filename);
+  }
+
+  async function nextSynchro(path: string, filename: string, size: string) {
+    await insertSynchroDownFileCSV(0, filename, size, new Date().getTime(), 0);
+    await deleteFile(path);
+    await recurciveGetCSVFile(undefined);
+  }
+
+  async function deleteFile(path: string) {
+    console.log('deleteFile ============= deleteFile', path);
+    return await RNFS.unlink(path);
+  }
+
+  async function toSynchroInDB(files: any[]) {
+    console.log(files);
+    if (files && files.length > 0) {
+      const file = files[0];
+      console.log("file", file);
+      if (file) {
+        const { path, transform, size, filename } = file;
+        if (size >= 23884570) {
+          await nextSynchro(path, filename, size);
+        }
+        if (size < Number(config.MineFile)) {
+          const dataString = await getFileToStringOld(path);
+          const res = await parseDataToInsert(dataString.split(newLine), transform);
+          await nextSynchro(path, filename, size);
+          console.log(res);
+        } else {
+          const ifstream = await readStream(path);
+          ifstream.open();
+          ifstream.onData(async (chunk: string) => {
+            await insertData(chunk, transform);
+            console.log('================================+ chunk chunk ================================+', chunk);
+          });
+
+          ifstream.onError((err: any) => {
+            console.log('================================+ err err ================================+', err);
+          });
+
+          ifstream.onEnd(async () => {
+            console.log('================================+ onEnd onEnd ================================+');
+            await nextSynchro(path, filename, size);
+          });
+        }
+        
+        console.log('================================+ FIN ================================+');
+      }
+      
     }
   }
+
 
   async function recurciveGetFile(lastFile: string, oldFile: string) {
 		console.log('===================================================> ', lastFile, oldFile);
 		setLastFile(lastFile);
     const { zip_name, files } = await synchroOneToOne(lastFile);
+    console.log('===================================================> ', zip_name, files);
     if (files && files.length > 0) {
-      await toSynchroInDB(files, lastFile, 0, undefined)
+      await toSynchroInDB(files)
     }
     if (zip_name === 'no update') {
       return;
@@ -165,9 +145,50 @@ export function useAppSynchroDown() {
     await recurciveGetFile(zip_name, oldFile);
   }
 
+
+  async function getLastFile(): Promise<string> {
+		const { name } = await getInsertSynchroDownFileCSV();
+		let folder = config.last_file; // 20200928_151618_hap 20200131_094745_hap 
+		const fld = name && name.split('hap');
+		if (fld && fld.length > 0) {
+			folder = `${fld[0]}hap`
+		}
+		return folder;
+  }
+
+  async function recurciveGetCSVFile(lastFile: string | undefined) {
+    let file = lastFile || await getLastFile();
+    const { zip_name, files } = await synchroOneToOne(file);
+    if (files && files.length > 0) {
+      await toSynchroInDB(files)
+    }
+    if (zip_name === 'no update') {
+      return;
+    }
+    // await recurciveGetCSVFile(zip_name, oldFile);
+  }
+  
+  async function goToSynchroDownNew(last_file: string | undefined) {
+    await recurciveGetCSVFile(last_file);
+    // const {
+    //   code_mag, numero_caisse, cle_serveur
+    // } = system?.params;
+    // const check = await checkSynchroDown(code_mag, numero_caisse, cle_serveur);
+    // if(check && check.data === 'yes') {
+    //   await recurciveGetCSVFile(last_file, last_file);
+    // }
+  }
+
+  async function parseDataToInsert(data: string[], transform: any) {
+    const promise = await data.map(async (line) => await insertData(line, transform));
+    const res = await Promise.all(promise);
+    console.log(res);
+  }
+
   return {
 		lastFile,
 		goToSynchroDown,
-		getLastFile,
+    getLastFile,
+    goToSynchroDownNew,
   };
 }

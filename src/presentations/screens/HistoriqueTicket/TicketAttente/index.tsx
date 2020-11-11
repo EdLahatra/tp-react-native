@@ -11,11 +11,11 @@ import {
 import { HeaderListTicket }  from '../../../components/HistoriqueTicket/HeaderListTicket';
 import { ItemListTicketAttente}  from '../../../components/HistoriqueTicket/ItemListTicket/ItemAttente';
 import { styles } from './styles';
-import { Ticket } from '../../../../interfaces/tickets';
+import { Ticket, Tickets } from '../../../../interfaces/tickets';
 import { useAppTickets } from '../../../../services/applicatif/tickets';
 import { reduxConnect } from '../../../../controllers/HistoriqueTicket';
 
-renderSeparatorView = () => {
+const renderSeparatorView = () => {
   return (
     <View style={{
         height: 1, 
@@ -37,25 +37,30 @@ export const TicketAttenteScreen : React.FunctionComponent<Props> = function (pr
 
 
   function getTickets(){
-    console.log("TICKETS REDUX");
-    console.log(props.tickets);
+    console.log('TICKETS REDUX ',props.tickets);
   }
 
-  function filterTicketAttente(ticketList){
+  function filterTicketAttente(ticketList:Tickets[]){
     return ticketList.filter(ticket => ticket.statut == 0);
   } 
+  function gotoEncaissement(item:Tickets){
+    navigation.navigate('Encaissement', {fromHistoAttente:true, tickets:item });
+    
+  }
+  /*const gotoEncaissements = (item: Tickets) => {
 
+  }*/
   return (
       <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
         <View style={{ flex: 1 , padding: 16}}>
         <HeaderListTicket/>
          { props.tickets.list && props.tickets.list.length > 0 ? 
           <FlatList          
-                  data={filterTicketAttente(props.tickets.list[0])}  
+                  data={filterTicketAttente(props.tickets.list)}  
                   keyExtractor={(_, index) => index.toString()} 
                   ItemSeparatorComponent={renderSeparatorView}       
                   renderItem={({ item }) =>
-                  <ItemListTicketAttente ticket={item} />
+                  <ItemListTicketAttente ticket={item} onCheck={() => gotoEncaissement(item)}/>
                 }/>  
                 : <View/>}
         </View>

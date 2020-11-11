@@ -14,14 +14,14 @@ const initial = {
 
 export function useAppTicketsDetails() {
   
-  const { selectTable, insertTable } = useMetiersRequeteSQL();
+  const { selectTable, insertTable, updateTable } = useMetiersRequeteSQL();
 
   useEffect(() => {
     // refreshListOfLists();
     // getInsertSynchroDownFileCSV();
   }, []);
 
-  async function getTicketsDetails(query: string) {
+  async function getTicketsDetails(query: FormatData) {
     const data = {
       query,
       // table: name,
@@ -32,7 +32,7 @@ export function useAppTicketsDetails() {
       ...initial,
     };
 
-    const request = new RequestDTO(data).generateRequestSelect();
+    const request = new RequestDTO({...query,...initial}).generateRequestSelect();
 
     const res = await selectTable(request);
     console.log({ res });
@@ -45,8 +45,16 @@ export function useAppTicketsDetails() {
     return newRows;
   }
 
+  async function updateTicketsDetailMetier(data: FormatData , id: string) {
+    const where = ['id', id];
+    const newRows = await updateTable(name, data, where);
+    console.log({ newRows });
+    return newRows;
+  }
+
   return {
     getTicketsDetails,
     insertticketsDetail,
+    updateTicketsDetailMetier,
   };
 }

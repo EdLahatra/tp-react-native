@@ -2,17 +2,19 @@ import axios from 'axios';
 
 import config from '../../data/config';
 
-const { urlWS } = config;
+const { urlWS, cle_serveur, code_mag, numero_caisse } = config;
 
-const toData = (name = 'no%20file') => `action=update&code_mag=HAP1&numero_caisse=07&cle_serveur=5DADA245&last_file=${name}`;
+const toData = (name = 'no%20file') => `action=update&code_mag=${code_mag}&numero_caisse=${numero_caisse}&cle_serveur=${cle_serveur}&last_file=${name}`;
 
-export const post = async (name: string | undefined) => {
+export const postApi = async (name: string | undefined) => {
+  const data = toData(name);
+  console.log(urlWS, data);
   try {
     const res = await axios({
       method: 'post',     //put
       url: urlWS,
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      data: toData(name),
+      data,
     });
     // console.log('post res ------------>', res);
     return res;

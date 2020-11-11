@@ -1,5 +1,5 @@
-import { UPDATE_SESSION, GO_SYNCHRO_DOWN, GO_SYNCHRO_UP, LOGIN_USER, UPDATE_PARAMETRE } from './constants';
-import { FormatData } from '../../../interfaces';
+import { Utilisateurs } from '../../../interfaces';
+import { UPDATE_SESSION, GO_SYNCHRO_DOWN, GO_SYNCHRO_UP, LOGIN_USER, UPDATE_PARAMETRE, OLD_USER } from './constants';
 
 export interface SynchroDown {
 	name: string | undefined
@@ -13,16 +13,20 @@ export interface Parametres {
 	last_file: string
 	cle_serveur: string
 	numero_mag: string
-	numero_enseigne: string
+  numero_enseigne: string
+  timer: number,
+  urlWS: string,
+  urlZip: string,
+  urlUp: string,
 };
 
-export interface Users {
+/*export interface Users {
   id: number,
   nom: string,
   nom_user: string,
   passwd: string,
   prenom: string
-}
+}*/
 
 export interface SystemState {
   loggedIn: boolean
@@ -30,8 +34,9 @@ export interface SystemState {
 	userName: string
 	synchroUp: boolean,
 	synchroDown: SynchroDown,
-	user: Users ,
-	params: Parametres,
+  user: Utilisateurs,
+  oldUser: Utilisateurs,
+  params: Parametres,
 };
 
 interface UpdateSessionAction {
@@ -56,7 +61,12 @@ interface GoSynchroDown {
 
 interface LoginUser {
   type: typeof LOGIN_USER
-  payload: Users,
+  payload: Utilisateurs,
 }
 
-export type SystemActionTypes = UpdateSessionAction | GoSynchroUp | GoSynchroDown | LoginUser | UpdateParametres;
+interface LoginOldUser {
+  type: typeof OLD_USER
+  payload: Utilisateurs,
+}
+
+export type SystemActionTypes = UpdateSessionAction | GoSynchroUp | GoSynchroDown | LoginUser | UpdateParametres | LoginOldUser;

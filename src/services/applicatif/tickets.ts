@@ -15,7 +15,7 @@ const initial = {
 
 export function useAppTickets() {
   const { insertTicketMetier, getTicketsMetier, generateNumeroTicket } = useMetiersTickets();
-	const { insertticketsDetail } = useAppTicketsDetails();
+	const { insertticketsDetail, updateTicketsDetailMetier,getTicketsDetails } = useAppTicketsDetails();
   const { insertTicketsPaiement, getTicketsPaiement, findTicketsPaiement } = useAppTicketsPaiements();
 
   useEffect(() => {
@@ -36,9 +36,21 @@ export function useAppTickets() {
     return res;
   }
 
+  async function updateTicketsDetail(data: FormatData, id: string) {
+    const res = await updateTicketsDetailMetier(data, id);
+    console.log({ res });
+    return res;
+  }
+
   async function insertTicketDetails(data: FormatData) {
     // id_cloture
     const res = await insertticketsDetail(data);
+    console.log({ res });
+    return res;
+  }
+
+  async function getTicketsDetail(data:any) {
+    const res = await getTicketsDetails(data);
     console.log({ res });
     return res;
   }
@@ -67,10 +79,6 @@ export function useAppTickets() {
     return res;
   }
 
-  function calculTVA(achatPrixTotalTTC:number, articleTva:number){
-      let res = 0;
-      res = Math.round(achatPrixTotalTTC - (achatPrixTotalTTC / (1 + articleTva / 100)));
-  }
 
   return {
     getTickets,
@@ -80,6 +88,7 @@ export function useAppTickets() {
     generateNumeroTickets,
     getTicketsPaiements,
     findTicketsPaiements,
-    calculTVA
+    updateTicketsDetail,
+    getTicketsDetail
   };
 }

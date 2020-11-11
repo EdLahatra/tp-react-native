@@ -3,8 +3,12 @@ import {Image,TextInput, View,Text,TouchableOpacity} from 'react-native';
 import { Tickets } from '../../../../../interfaces/tickets';
 import { displayDate , displayHour} from '../../../../../services/utils';
 import {styles} from './styles';
+export interface Props{
+  onCheck:() => void;
+  ticket: Tickets
+}
 export const ItemListTicketAttente : React.FunctionComponent<Props> = function (props) {
-  const {ticket} = props;
+  const {ticket,onCheck} = props;
 
   useEffect(() => {
  }, []);

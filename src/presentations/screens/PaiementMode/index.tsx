@@ -26,8 +26,14 @@ export const PaiementModeScreen : React.FunctionComponent<Props> = function (pro
     const [cartemode, setCarteMode] = useState([0]);
     let values:number[] = [];
     useEffect(() => {
-        for (let i = 1; i <= montant.count; i=i*5) {
-            values.push(i);
+        console.log('mont',montant);
+        for (let i = 0; i <= montant.count; i=i+5) {
+            let j = i+5;
+            if(j <= montant.count){
+                values.push(j);
+                
+            }
+           
           }
        
         setCarteMode(values);

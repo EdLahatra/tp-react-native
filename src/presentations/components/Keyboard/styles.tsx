@@ -63,14 +63,31 @@ export const styles = StyleSheet.create({
     zIndex: 1
   },
   passwordinput:{ 
-      backgroundColor: '#F5F5FF' ,
+      backgroundColor: '#F2F2F2' ,
       borderRadius: 5,
       height:44,
-      flex:5
+      flex:5,
+    
+    fontSize:14,
+    fontWeight:'bold',
+    color:'black',
   },
+  icon:{
+    flex:1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 60,
+    height:50,
+  },
+
+  imgIcon:{
+    width:27,
+    height:18.5,
+  },
+
   button: {
     
-    backgroundColor: '#3928A6',
+    backgroundColor: '#E0C298',
     borderRadius: 5,
     marginStart:5,
     justifyContent: 'center',

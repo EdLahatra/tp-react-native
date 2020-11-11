@@ -1,4 +1,3 @@
-export * from './Produits';
 export * from './Home';
 export * from './Tpe';
 export * from './Login';
@@ -17,3 +16,9 @@ export * from './PaiementCadeau';
 export * from './Parametres';
 export * from './Cloture';
 export * from './ControleCaisse';
+export * from './AuthSupervisor';
+export * from './ChoixMotifRemise';
+export * from './StatsBDD';
+export * from './MontantRemise';
+export * from './MontantRemise/Montant';
+export * from './MontantRemise/Pourcent';

@@ -14,6 +14,8 @@ import InputText from '../../components/InputText';
 import Button from '../../components/Button';
 import Popup from '../../components/Popup';
 import { ControleCaisseVerfication } from './verfication';
+import HeaderComponent from '../../components/NavigationHeader';
+import { B } from '../Cloture';
 
 type NavigationProps = StackNavigationProp<StackParams, 'Home'>;
 
@@ -52,16 +54,22 @@ export const ControleCaisseScreen: React.FunctionComponent<IProps> = function (p
   async function clotureCaisse(btnx: boolean) {
     setModalVisible(false);
     if(btnx) {
-      navigation.navigate('ControleCaisseVerfications');
+      navigation.navigate('ControleCaisseVerfications', { cb });
     }
   }
 
   return (
-    <ScrollView>
+    <ScrollView style={{ backgroundColor: 'white' }}>
       <SafeAreaView style={styles.container}>
+        <HeaderComponent
+          title={'contrôle caisse'}
+          goToLeft={()=> navigation.navigate('Acceuil')}
+          goToRight={()=> {}}
+          rigth={false}
+        />
         <View style={{ padding: 20, flex: 1, justifyContent: 'space-around', flexDirection: 'column' }}>
           <View style={{ paddingBottom: 20 }}>
-            <Text style={{ fontSize: 18, textAlign: 'center' }}>{STRING.CONTROLE_INFO}</Text>
+            <Text style={{ fontSize: 16, textAlign: 'center', color: '#000000' }}>{STRING.CONTROLE_INFO}</Text>
           </View>
           <View style={{ paddingBottom: 20 }}>
             <InputText
@@ -69,6 +77,7 @@ export const ControleCaisseScreen: React.FunctionComponent<IProps> = function (p
               value={cb}
               onChange={(text: string) => setCB(text)}
               multiline={false}
+              keyboardType='numeric'
             />
           </View>
           <View>
@@ -82,8 +91,11 @@ export const ControleCaisseScreen: React.FunctionComponent<IProps> = function (p
           cancelButton='Annuler'
           okButton={STRING.OK}
           isTwoButton={true}
-          message={'Vouler-vous continuer ?'} >
-          <Text>Vous avez indiqué in nombre de {cb} pour les paiements 'Carte Bleue'.</Text>
+          message={''} >
+            <View>
+              <Text style={{ textAlign: 'center', fontSize: 16 }}>Vous avez indiqué un <B>nombre de {cb}</B> pour les paiements 'Carte Bleue'.</Text>
+              <Text style={{ textAlign: 'center', fontSize: 16, margin: 15 }}>Vouler-vous continuer ?</Text>
+            </View>
         </Popup>
       </SafeAreaView>
     </ScrollView>

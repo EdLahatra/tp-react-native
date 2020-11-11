@@ -1,6 +1,6 @@
 import { SystemState, SystemActionTypes, SynchroDown, Parametres } from './types'
-import { UPDATE_SESSION, GO_SYNCHRO_UP, GO_SYNCHRO_DOWN, LOGIN_USER, UPDATE_PARAMETRE } from './constants';
-import { FormatData } from '../../../interfaces';
+import { UPDATE_SESSION, GO_SYNCHRO_UP, GO_SYNCHRO_DOWN, LOGIN_USER, UPDATE_PARAMETRE, OLD_USER } from './constants';
+import { FormatData, Utilisateurs } from '../../../interfaces';
 
 export function updateSession(newSession: SystemState): SystemActionTypes {
 	return {
@@ -30,9 +30,16 @@ export function goSychroDown(payload: SynchroDown): SystemActionTypes {
 	}
 };
 
-export function loginUser(payload: FormatData | null): SystemActionTypes {
+export function loginUser(payload: Utilisateurs): SystemActionTypes {
 	return {
 		type: LOGIN_USER,
+		payload,
+	}
+};
+
+export function loginOldUser(payload: Utilisateurs): SystemActionTypes {
+	return {
+		type: OLD_USER,
 		payload,
 	}
 };

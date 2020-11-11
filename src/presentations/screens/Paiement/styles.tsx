@@ -42,10 +42,12 @@ export const styles = StyleSheet.create({
       },
       txtTitle:{
         fontSize:10,
-        fontWeight:'bold'
+        fontWeight:'bold',
+        color:'#4F4F4F'
+    
       },
       headertxtColor:{
-        color:'#3928A6'
+        color:'#998C7E'
       },
       margin:{
           marginTop:10,
@@ -53,10 +55,10 @@ export const styles = StyleSheet.create({
       txtValue:{
         fontSize:16,
         fontWeight:'bold',
-        color:'#3928A6',
+        color:'#000000',
       },
       inputname:{ 
-        backgroundColor: '#F5F5FF' ,
+        backgroundColor: '#F2F2F2' ,
         borderRadius: 5,
         marginTop:5,
         flex:5,

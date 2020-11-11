@@ -12,11 +12,11 @@ import {name as appName} from '../app.json';
 export function App() {
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      {/* <PersistGate loading={null} persistor={persistor}> */}
         <DatabaseProvider>
           <AppNavigation />
         </DatabaseProvider>
-      </PersistGate>
+      {/* </PersistGate> */}
     </Provider>
   );
 }

@@ -1,17 +1,17 @@
-import { Dimensions, ViewStyle,  } from 'react-native';
+import { Dimensions, ViewStyle, StyleSheet } from 'react-native';
 const { height, width } = Dimensions.get('window');
 // interface Styles {
 //   wrapper: ViewStyle;
 //   textContent: TextStyle;
 // }
-
-export default {
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   verticalStyle:{
     flex: 1,
     flexDirection: 'column',
+    backgroundColor:'white'
   },
   body: {
     justifyContent: 'center',
@@ -34,7 +34,9 @@ export default {
     fontSize: 14,
     fontWeight: 'bold',
     paddingStart:5,
-    marginTop:5
+    marginTop:5,
+    color:'#998C7E'
+
   },
   heightItem:{
     height:40,
@@ -44,7 +46,7 @@ export default {
     right:0,
     marginEnd:10,
     position: 'absolute',
-    backgroundColor: '#3928A6',
+    backgroundColor: '#E0C298',
     borderRadius: 2,
     justifyContent: 'center',
     alignItems: 'center',
@@ -62,7 +64,7 @@ export default {
    
   },
   inputname:{ 
-    backgroundColor: '#F5F5FF' ,
+    backgroundColor: '#F2F2F2' ,
     borderRadius: 5,
     
     fontSize:14,
@@ -72,4 +74,5 @@ export default {
     height:44,
     
 },
-};
+
+});

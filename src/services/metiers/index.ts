@@ -5,6 +5,8 @@ export function useMetiersApp() {
   const [counts, setCounts] = useState<{
     count: any;
     table: string;
+    last?: string;
+    first?: string;
   }[]>([]);
   const [lastFileName, setLastFileName] = useState<string>('');
   const [linesInsert, setLinesInsert] = useState<number>(0);

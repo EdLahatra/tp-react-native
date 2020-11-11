@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useMetiersRequeteSQL } from './requeteSQL';
 import { tables } from '../utils';
 import { RequestDTO } from '../../dto/request';
 import { FormatData } from '../../interfaces';
 
-const { name } = tables.Tickets;
+const { name } = tables.ControlesCaisse;
 
 const initial = {
   table: name,
   // columns: columns,
 };
 
-export function useAppControlesCaisses() {
+export function useMetierControlesCaisses() {
   
   const { selectTable, insertTable } = useMetiersRequeteSQL();
 

@@ -1,5 +1,5 @@
 import React , { useState, useEffect } from 'react';
-import { View,TouchableOpacity , Text, TextInput,Image, ListItem, FlatList} from 'react-native';
+import { View,TouchableOpacity , Text, TextInput,Image, ListItem, FlatList, BackHandler} from 'react-native';
 import ClientController, { reduxConnect, Props } from '../../../controllers/Client';
 import HeaderClient from '../../components/Client/HeaderClient';
 
@@ -27,8 +27,15 @@ export const ClientScreen: React.FunctionComponent<Props> = function (props) {
 
     useEffect(() => {
          //getClients();
+         BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+         return () => {
+           BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick);
+         };
       }, []);
-
+      function handleBackButtonClick(){
+        navigation.goBack();
+        return true;
+      }
 
     /*function getClients(){
         let clients: { name: string, phone: string, group: string }[] =[

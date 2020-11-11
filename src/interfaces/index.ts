@@ -88,6 +88,46 @@ export interface ArticleI{
         d_actif: number,
         infos_caisse: string,
         article_commentaire: string,
-        article_pv_ttc: string
-}
+        article_pv_ttc: string,
+
+        numero_ligne: number,
+};
+export interface Utilisateurs{
   
+  derniere_connexion:string ,
+  date_modif:string,
+  date_creation:string,
+  date_naissance:string,
+  nom:string,
+  prenom:string ,
+  numero_tel:string,
+  nom_user:string ,
+  passwd:string ,
+  droit_ouverture:string ,
+  droit_vente:string ,
+  droit_retour:string ,
+  droit_admin:string ,
+  droit_abandon:string ,
+  droit_manager:string ,
+  droit_avoir:'' ,
+  droit_avoir_force:'' ,
+  droit_cloture_sans_decompte:'' ,
+  droit_fermeture:'' ,
+  droit_kdo_force:'' ,
+  droit_remise3:string ,
+  droit_remise2:string ,
+  droit_remise1:string ,
+  droit_retour_force:string ,
+  droit_rembourse_esp:'' ,
+  droit_ouverture_tiroir:'' 
+};
+
+export interface MotifRemise {
+   id:number,
+  id_motif_remise:number,
+  libelle_impression :string,
+  libelle_complet:string ,
+  date_modification:string ,
+  niveau_droit:number ,
+  pourcent_remise_max : number
+}

@@ -5,64 +5,65 @@ import {
   StyleSheet,
   Text,
   TouchableHighlight,
+  TouchableOpacity,
   View
 } from "react-native";
-interface Props{
-    message:string | any,
-    cancelButton:string,
-    okButton:string,
-    okAction:() => void;
-    modalVisible: boolean,
-    isTwoButton: boolean,
-    setModalVisible:(isok:boolean) => void
+interface Props {
+  message: string | any,
+  cancelButton: string,
+  okButton: string,
+  okAction: () => void;
+  modalVisible: boolean,
+  isTwoButton: boolean,
+  setModalVisible: (isok: boolean) => void
 }
 
-const Popup : React.FunctionComponent<Props> = function (props) {
-  const { message ,modalVisible,setModalVisible,cancelButton,okButton,isTwoButton,okAction, children } = props;
+const Popup: React.FunctionComponent<Props> = function (props) {
+  const { message, modalVisible, setModalVisible, cancelButton, okButton, isTwoButton, okAction, children } = props;
 
   return (
-     
-      <Modal
-        animationType='fade'
-        transparent={false}
-        visible={modalVisible}
-        
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View>{children}</View>
-            <Text style={styles.modalText}>{message}</Text>
-            <View style={{flexDirection:'row'}}>
-            { isTwoButton == true ?
-            <><TouchableHighlight
-                              style={{ ...styles.openButton, backgroundColor: "#787CC2", flex: 1, marginEnd: 8 }}
-                              onPress={() => {
-                                  setModalVisible(!modalVisible);
-                              } }
-                          >
-                              <Text style={styles.textStyle}>{cancelButton}</Text>
-                          </TouchableHighlight>
-                              <TouchableHighlight
-                                  style={{ ...styles.openButton, backgroundColor: "#3928A6", flex: 1, marginStart: 8 }}
-                                  onPress={() => { okAction()
-                                  } }
-                              >
-                                  <Text style={styles.textStyle}>{okButton}</Text>
-                              </TouchableHighlight></> 
-            : <TouchableHighlight
-            style={{ ...styles.openButton, backgroundColor: "#3928A6", flex: 1, marginEnd: 8 }}
-            onPress={() => {
-                setModalVisible(!modalVisible);
-            } }
-        >
-            <Text style={styles.textStyle}>{okButton}</Text>
-          </TouchableHighlight> }
-            </View>
+
+    <Modal
+      animationType='fade'
+      transparent={false}
+      visible={modalVisible}
+    >
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>{message}</Text>
+          <View style={{ flexDirection: 'row' }}>{children}</View>
+          <View style={{ flexDirection: 'row' }}>
+            {isTwoButton == true ?
+              <><TouchableHighlight
+                style={{ ...styles.openButton, backgroundColor: "white", flex: 1, marginEnd: 8 }}
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                }}
+              >
+                <Text style={styles.textStyle}>{cancelButton}</Text>
+              </TouchableHighlight>
+                <TouchableHighlight
+                  style={{ ...styles.openButton, backgroundColor: "#998C7E", flex: 1, marginStart: 8 }}
+                  onPress={() => {
+                    okAction()
+                  }}
+                >
+                  <Text style={styles.textStyle}>{okButton}</Text>
+                </TouchableHighlight></>
+              : <TouchableOpacity
+                style={{ ...styles.openButton, backgroundColor: "#998C7E", flex: 1, marginEnd: 8 }}
+                onPress={() => {
+                  return setModalVisible(!modalVisible);
+                }}
+              >
+                <Text style={styles.textStyle}>{okButton}</Text>
+              </TouchableOpacity>}
           </View>
         </View>
-      </Modal>
+      </View>
+    </Modal>
 
-  
+
   );
 };
 
@@ -93,16 +94,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#F194FF",
     borderRadius: 5,
     padding: 10,
-    elevation: 2
+    elevation: 2,
+    marginStart:40,marginRight:40
   },
   textStyle: {
-    color: "white",
+    color: "#E0C298",
     fontWeight: "bold",
     textAlign: "center"
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center"
+    textAlign: "center",
+    fontSize: 16
   }
 });
 

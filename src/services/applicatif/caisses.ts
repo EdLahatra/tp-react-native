@@ -3,11 +3,13 @@ import { useEffect } from 'react';
 import { useMetierClotures } from '../metiers/clotures';
 import { useAppOuverturesTiroir } from '../metiers/ouvertureTirroir';
 import { FormatData } from '../../interfaces';
+import { useMetierControlesCaisses } from '../metiers/controlesCaisse';
 
 export function useCaisseApp() {
 
   const { insertClotures, selectClotutre, updateClotures } = useMetierClotures();
   const { insertOuverturesTiroir } = useAppOuverturesTiroir();
+  const { insertControlesCaisse } = useMetierControlesCaisses();
 
   useEffect(() => {
     // checkCloture();
@@ -30,16 +32,21 @@ export function useCaisseApp() {
     };
   }
 
-  async function clotureCaisses2(user: string) {
+  async function clotureCaisses2(user: string, cb: string, montant: string, commentaire: string) {
     // 637363953100000000 1603014612869
-    const res_cloture = await updateClotures(user);
+    const res_cloture = await updateClotures(user, cb, montant, commentaire);
   
     return res_cloture;
+  }
+
+  async function insertControlesCaisseApp(controle: FormatData) {
+    return insertControlesCaisse(controle);
   }
   
   return {
     ouvertureCaisse,
     checkCloture,
     clotureCaisses2,
+    insertControlesCaisseApp,
   };
 }

@@ -48,10 +48,11 @@ export const styles = StyleSheet.create({
       },
       txtTitle:{
         fontSize:10,
-        fontWeight:'bold'
+        fontWeight:'bold',
+        color:'#4F4F4F'
       },
       headertxtColor:{
-        color:'#3928A6'
+        color:'#998C7E'
       },
       margin:{
           marginTop:10,
@@ -59,10 +60,10 @@ export const styles = StyleSheet.create({
       txtValue:{
         fontSize:16,
         fontWeight:'bold',
-        color:'#3928A6',
+        color:'#000000',
       },
       inputname:{ 
-        backgroundColor: '#F5F5FF' ,
+        backgroundColor: '#F2F2F2' ,
         borderRadius: 5,
         marginTop:5,
         fontSize:14,
@@ -78,7 +79,24 @@ export const styles = StyleSheet.create({
         marginTop:5,
         marginStart:5,
         flex:1,
-        backgroundColor: '#3928A6',
+        backgroundColor: '#E0C298',
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width:50,
+        height:44,
+        
+        shadowColor: '#303838',
+        shadowOffset: { width: 0, height: 5 },
+        shadowRadius: 10,
+        shadowOpacity: 0.35,
+      },
+      buttonOK: {
+    
+        marginTop:5,
+        marginStart:5,
+        flex:1,
+        backgroundColor: '#998C7E',
         borderRadius: 5,
         justifyContent: 'center',
         alignItems: 'center',
@@ -137,7 +155,7 @@ export const styles = StyleSheet.create({
       fontSize:12,
       fontStyle:'normal',
       fontWeight:'bold',
-      color:'#3928A6',
+      color:'#000000',
       textAlign: 'center'
   },
   });

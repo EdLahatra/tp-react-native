@@ -43,7 +43,7 @@ export const ScanScreen: React.FunctionComponent<IProps> = function (props) {
   const { counts, selectCounts, lastFileName, linesInsert } = useMetiersApp();
   const { ouvertureCaisse, checkCloture } = useCaisseApp();
   const { synchroUp } = useAppSynchroUp();
-  const { insertTickets, getTickets, insertTicketDetails, insertTicketsPaiements } = useAppTickets();
+  const { insertTickets, getTickets, insertTicketDetails, insertTicketsPaiements, updateTicketsDetail } = useAppTickets();
   const { getUsers } = useAppAuth();
   const { getClients } = useAppClients();
   const { getArticles, getArticlesByCodeBarres } = useAppArticles();
@@ -95,6 +95,13 @@ export const ScanScreen: React.FunctionComponent<IProps> = function (props) {
     console.log({ cloture });
 
     // =========================== Tickets ==================================
+    const id = '12';
+    const dataUpdate = {
+      numero_ligne: 2,
+    };
+    const updateTicket = await updateTicketsDetail(dataUpdate, id);
+    console.log({ updateTicket });
+
     const ticket = await insertTickets(faker.ticket);
     console.log({ ticket });
 

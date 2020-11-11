@@ -20,11 +20,11 @@ const EncaissementHeader : React.FunctionComponent<Props> = function (props) {
      
         <View style={styles.centeredView}>
          <TouchableOpacity style={styles.btnHome} onPress={() => goToHome()} >
-             <Image source = {require('../../resources/images/home.png')}  />
+             <Image source = {require('../../resources/images/g_home_filled.png')}  />
          </TouchableOpacity>
         <Text style={styles.txtstyle}>ENCAISSEMENT</Text>
         <TouchableOpacity style={styles.btnHome} onPress={() => goToHisto()} >
-             <Image source = {require('../../resources/images/menu.png')}  />
+             <Image source = {require('../../resources/images/g_menu.png')}  />
          </TouchableOpacity>
         </View>
     
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
    flexDirection:'row',
    
     alignItems:'center',
-    backgroundColor:'#F2F2F2',
+    backgroundColor:'#998C7E',
    height:56,
   },
   btnHome:{
@@ -46,7 +46,9 @@ const styles = StyleSheet.create({
   },
   txtstyle:{
       flex:4,
-      color:'#787CC2'
+      color:'#FFFFFF',
+      fontSize:16
+      
   }
   
 });

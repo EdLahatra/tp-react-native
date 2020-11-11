@@ -1,5 +1,5 @@
 import React ,{ useEffect, useRef, useState }from 'react';
-import { View,TouchableOpacity , Text, TextInput,Image,FlatList,ScrollView, Modal, TouchableHighlight} from 'react-native';
+import { View,TouchableOpacity , Text, TextInput,Image,FlatList,ScrollView, Modal, TouchableHighlight, BackHandler} from 'react-native';
 import  {  reduxConnect } from '../../../controllers/Encaissement';
 
 import Button from '../../components/Button';
@@ -18,6 +18,8 @@ import TextWithResult from '../../components/TextWithResult';
 import { useAppTickets } from '../../../services/applicatif/tickets';
 import { toDatetime } from '../../../services/utils';
 import PopupWithTextInput from '../../components/PopupWithTextInput';
+import BackHeader from '../../components/NavigationHeader/backHeader';
+
 let articlesList:Array<Panier> = [];
 type NavigationProps = StackNavigationProp<StackParams, 'Paiement'>;
 type Route = RouteProp<StackParams, 'Paiement'>;
@@ -79,9 +81,19 @@ export const PaiementScreen : React.FunctionComponent<Props> = function (props) 
      },[montantregle]);
     useEffect(() => {
         setClient(route.params.clientI.nom+' '+route.params.clientI.prenom);
-        
+        BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+        return () => {
+          BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick);
+        };
        
      },[]);
+     
+ 
+      function handleBackButtonClick(){
+       navigation.goBack();
+       return true;
+     }
+ 
 
     function getPanierAPayer(code:string,mode:string){
         
@@ -275,6 +287,7 @@ export const PaiementScreen : React.FunctionComponent<Props> = function (props) 
         return (
            
              <View style={{flex: 1,backgroundColor:'white'}}>
+                 <BackHeader msg="PAIEMENT" goBack = {() => navigation.goBack()}/>
             <ScrollView 
             scrollEnabled>
             <View style={styles.container}>
@@ -287,7 +300,7 @@ export const PaiementScreen : React.FunctionComponent<Props> = function (props) 
                     </View>
                     <View style={styles.box2}>
                         <Text style={styles.txtTitle}>Vendeur</Text>
-                        <Text style={styles.txtValue}>{route.params?.item.nom+' '+route.params?.item.prenom}</Text>
+                        <Text style={styles.txtValue}>{route.params?.item ? route.params?.item: ''}</Text>
                     </View>
                </View>
                
@@ -379,7 +392,7 @@ export const PaiementScreen : React.FunctionComponent<Props> = function (props) 
                     <Popover isVisible={visibility}
                              from={(
                                 <TouchableOpacity style={{flex:1,alignItems:'center', justifyContent:'center'}} onPress={() => setVisibility(true)}>
-                                    <Image style={styles.img} source={require("../../resources/images/flash.png")}/>
+                                    <Image style={styles.img} source={require("../../resources/images/g_payment.png")}/>
                                     <Text style={styles.txtstyle}>{STRING.MENU_METHODE_PAIE}</Text>
                                 </TouchableOpacity>
                               )}>
@@ -397,10 +410,10 @@ export const PaiementScreen : React.FunctionComponent<Props> = function (props) 
                     
                     </View>  
                     <View style={{flex:1}}>
-                    <ButtonWithIcon message={STRING.MENU_ATTENTE} source = {require("../../resources/images/hourglass.png")} onPress={ () => showPopupAttente()}/>
+                    <ButtonWithIcon message={STRING.MENU_ATTENTE} source = {require("../../resources/images/g_hourglass.png")} onPress={ () => showPopupAttente()}/>
                     </View>  
                     <View style={{flex:1}}>
-                    <ButtonWithIcon message={STRING.MENU_ANN_VENTE} source = {require("../../resources/images/remove_shopping_cart.png")} onPress={ () => showPopupAnnulerVente()}/>
+                    <ButtonWithIcon message={STRING.MENU_ANN_VENTE} source = {require("../../resources/images/g_remove_shopping_cart.png")} onPress={ () => showPopupAnnulerVente()}/>
                     </View>          
                         
             </View>

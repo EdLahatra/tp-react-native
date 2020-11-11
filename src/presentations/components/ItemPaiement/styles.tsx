@@ -51,6 +51,10 @@ export const styles = StyleSheet.create({
   txtItem:{
       marginStart:10,
       marginEnd:10,
+  },
+  txtItemColor:{
+    color:'#000000',
+    fontSize:10,
   }
   
   

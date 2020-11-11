@@ -11,7 +11,7 @@
     </style>
 
 
-    <style name="SplashScreenTheme" parent="SplashScreen_SplashTheme">
+    <style name="SplashScreenTheme" parent="SplashScreen_Fullscreen">
         <item name="colorPrimaryDark">@color/status_bar_color</item>
     </style>
 </resources>

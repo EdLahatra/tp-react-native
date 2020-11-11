@@ -9,7 +9,6 @@ const { name } = tables_synchro_up.Clotures;
 
 const initial = {
   table: name,
-  // columns: columns,
 };
 
 export function useMetierClotures() {
@@ -17,8 +16,6 @@ export function useMetierClotures() {
   const { selectTable, insertTable, selectOneLasteValue, updateTable } = useMetiersRequeteSQL();
 
   useEffect(() => {
-    // refreshListOfLists();
-    // getInsertSynchroDownFileCSV();
   }, []);
 
   async function getClotures(query: string) {
@@ -101,19 +98,6 @@ export function useMetierClotures() {
   }
 
   async function insertCloturesDetailsPaiement(data: FormatData) {
-    // const data = {
-    //   numero_ticket: '',
-    //   statut: '',
-    //   user_creation: '',
-    //   id_clientvarchar: '',
-    //   user_annulation: '',
-    //   motif_annulation: '',
-    //   date_debut: '',
-    //   date_fin: '',
-    //   id_cloture: '',
-    //   vendeurs: '',
-    // };
-
     const newRows = await insertTable(data, name);
     console.log({ newRows });
     return newRows;
@@ -139,30 +123,20 @@ export function useMetierClotures() {
   }
 
   async function insertCloturesMensuelle(data: FormatData) {
-    // const data = {
-    //   numero_ticket: '',
-    //   statut: '',
-    //   user_creation: '',
-    //   id_clientvarchar: '',
-    //   user_annulation: '',
-    //   motif_annulation: '',
-    //   date_debut: '',
-    //   date_fin: '',
-    //   id_cloture: '',
-    //   vendeurs: '',
-    // };
-
     const newRows = await insertTable(data, name);
     console.log({ newRows });
     return newRows;
   }
 
-  async function updateClotures(usr_fermeture: string) {
+  async function updateClotures(usr_fermeture: string, cb: string, montant: string, commentaire: string) {
     const data = {
       usr_fermeture,
       date_fin_fermeture: toDatetime(new Date()).toString(),
       date_fermeture: toDatetime(new Date()).toString(),
       synchro_up: 0,
+      commentaire,
+      mnt_1_reel: montant,
+      nb_1_reel: cb,
     };
     const columns = ['id'];
     const cloture = await selectOneLasteValue(name, columns, []);

@@ -1,5 +1,15 @@
 apply plugin: "com.android.application"
 
+project.ext.envConfigFiles = [
+    debug: ".env",
+    release: ".env",
+    dev: ".env.dev",
+    stagingrelease: ".env.staging",
+    productionrelease: ".env.production"
+]
+
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
 import com.android.build.OutputFile
 
 /**
@@ -130,13 +140,15 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.rnwebmobiledesktop"
+        applicationId project.env.get("APP_ID")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general' // <--- insert this line
+        // falvorDimensions "default"
+        resValue "string", "build_config_package", "${applicationId}"
     }
     splits {
         abi {
@@ -170,6 +182,18 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+        stagingrelease {
+            initWith release
+            matchingFallbacks = ['release', 'debug']
+        }
+        productionrelease {
+            initWith release
+            matchingFallbacks = ['release', 'debug']
+        }
+        dev {
+            initWith release
+            matchingFallbacks = ['release', 'debug']
         }
     }
 
@@ -229,4 +253,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 
-apply plugin: 'com.google.gms.google-services'
+// apply plugin: 'com.google.gms.google-services'
+

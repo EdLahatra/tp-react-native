@@ -14,29 +14,29 @@ export const styles = StyleSheet.create({
   },
   
   imgstyle:
-  {flexDirection: "row", width: 75, height:75, marginTop: 20},
+  {flexDirection: "row", width: 160, height:56, marginTop: 20},
   txtstyle: {
     fontSize: 16,
     fontWeight: 'bold',
     
     
-    color: '#3928A6',
+    color: '#998C7E',
   },
   txtstyleNormal: {
     fontSize: 16,
     
-    color: '#3928A6',
+    color: '#998C7E',
   },
   nomstyle:{
     fontSize: 10,
     fontWeight: 'bold',
     right:0,
     left:0,
-    top:height * 0.26,
+    top:height * 0.28,
     position: 'absolute',
     marginTop: 20,
     marginStart:10,
-    color: '#3928A6'
+    color: '#4F4F4F'
   },
   
 

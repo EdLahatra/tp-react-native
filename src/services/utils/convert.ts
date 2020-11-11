@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 const insertArticle = `
-INSERT INTO Articles(
+REPLACE INTO Articles(
   a_horo_modification,
   article_bonnet_designation,
   article_code_article,
@@ -25,7 +25,7 @@ INSERT INTO Articles(
 `;
 
 const insertClient = `
-INSERT INTO Clients(
+REPLACE INTO Clients(
   date_creation,
   date_modification,
   id_client,
@@ -88,7 +88,7 @@ INSERT INTO Clients(
   synchro_up) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 `;
   
-const requete = "INSERT INTO Utilisateurs (date_creation, date_modif, date_naissance, derniere_connexion, droit_abandon, droit_admin, droit_avoir, droit_avoir_force, droit_cloture_sans_decompte, droit_fermeture, droit_kdo_force, droit_manager, droit_ouverture, droit_ouverture_tiroir, droit_remise1, droit_remise2, droit_remise3, droit_retour, droit_retour_force, droit_vente, droit_rembourse_esp, nom, nom_user, numero_tel, passwd, prenom) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+const requete = "REPLACE INTO Utilisateurs (date_creation, date_modif, date_naissance, derniere_connexion, droit_abandon, droit_admin, droit_avoir, droit_avoir_force, droit_cloture_sans_decompte, droit_fermeture, droit_kdo_force, droit_manager, droit_ouverture, droit_ouverture_tiroir, droit_remise1, droit_remise2, droit_remise3, droit_retour, droit_retour_force, droit_vente, droit_rembourse_esp, nom, nom_user, numero_tel, passwd, prenom) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
 export const toClients = (cols: any) => {
   // ncli.id_client = cols[2];
@@ -250,7 +250,7 @@ export const toArticle = (cols: any) => cols && cols.length > 17 ? ({ requete: i
 // });
 
 const insertArticlesCodesBarres = `
-INSERT INTO ArticlesCodesBarres(code_barre, article_code_article) VALUES (?,?);
+REPLACE INTO ArticlesCodesBarres(code_barre, article_code_article) VALUES (?,?);
 `;
 
 export const toArticlesCodesBarre = (cols: any) => {
@@ -293,7 +293,7 @@ export const toModesReglementsVerifs = (cols: any) => {
 // });
 
 const insertMagasin = `
-INSERT INTO Magasins(
+REPLACE INTO Magasins(
   code_magasin_franchiseur,
   code_magasin_interne,
   date_modification,
@@ -477,7 +477,7 @@ export  const toPromosCoupons = (cols: any) => ({
 });
 
 const insertPromo = `
-INSERT INTO Promos(
+REPLACE INTO Promos(
   id_promo,
   code_magasin,
   date_debut,

@@ -14,9 +14,9 @@ export const styles = StyleSheet.create({
         flexDirection: 'column',
       },
       body: {
-        justifyContent: 'center',
-        flexDirection: 'column',
         
+        flexDirection: 'column',
+        backgroundColor:'white',
         flex: 1,
       },
       autocompleteContainer: {
@@ -29,6 +29,27 @@ export const styles = StyleSheet.create({
         
         zIndex: 1
       },
+      txtstyle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        
+        
+        color: '#998C7E',
+      },
+      txtstyleNormal: {
+        fontSize: 16,
+        
+        color: '#998C7E',
+      },
+      viewhead:{
+        position: 'absolute',
+               
+        left: 0,
+        top:height * 0.23,
+        flexDirection:'row',
+        marginTop: 20,
+        marginStart:10,
+      }
      
   });
   

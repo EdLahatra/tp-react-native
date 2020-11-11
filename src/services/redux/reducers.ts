@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux';
 
 import { systemReducer } from './system/reducers';
-import { produitsReducer } from './produits/reducers';
 import { requestsReducer } from './request/reducers';
 import { ticketsReducer } from './tickets/reducers';
 
@@ -12,7 +11,6 @@ export const rootReducer = combineReducers({
 		return {};
   },
   system: systemReducer,
-  produits: produitsReducer,
   request: requestsReducer,
   tickets: ticketsReducer
 });

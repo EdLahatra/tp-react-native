@@ -59,8 +59,14 @@ export class DatabaseInitialization {
       // transaction.executeSql("DROP TABLE IF EXISTS Parametres;");
     // }
 
-    // Object.keys(Tables).map(table => transaction.executeSql(`DROP TABLE IF EXISTS ${table};`));
+    Object.keys(Tables).map(table => transaction.executeSql(`DROP TABLE IF EXISTS ${table};`));
     Object.values(Tables).map(table => transaction.executeSql(table));
+
+    transaction.executeSql("CREATE UNIQUE INDEX IF NOT EXISTS utilisateurs_idx ON Utilisateurs (nom_user)");
+    transaction.executeSql("CREATE UNIQUE INDEX IF NOT EXISTS clients_idx ON Clients (id_client)");
+    transaction.executeSql("CREATE UNIQUE INDEX IF NOT EXISTS promos_idx ON Promos (id_promo)");
+    transaction.executeSql("CREATE UNIQUE INDEX IF NOT EXISTS articles_idx ON Articles (article_code_article)")
+    transaction.executeSql("CREATE UNIQUE INDEX IF NOT EXISTS articlescodesbarres_idx ON ArticlesCodesBarres (code_barre)");
 
   }
 

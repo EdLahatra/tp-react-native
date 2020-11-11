@@ -27,7 +27,7 @@ export class Header extends React.Component<Props> {
            <View style={{alignSelf: 'center'}}>
             <Image 
                 style={styles.imgstyle}
-                source={require('../../resources/images/flash.png')} />
+                source={require('../../resources/images/g_logoheader.png')} />
             </View>
             <View style={{
                 position: 'absolute',
@@ -42,6 +42,7 @@ export class Header extends React.Component<Props> {
            {this.props.ispass && (<Text style={styles.txtstyleNormal}>BIENVENUE </Text>  )}
            <Text style={styles.txtstyle}>{this.props.title}</Text>  
            </View>
+           <View style={{height:4, width:40,backgroundColor:'#E0C298', position:'absolute', top:height * 0.28,marginStart:10}}></View>
           <Text style={styles.nomstyle}>{this.props.nom}</Text> 
            
        </View>

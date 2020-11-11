@@ -19,7 +19,7 @@ const addOperatorLogique = (req: any) => {
   }, 'WHERE ');
 }
 
-const updatedCollumn = (columns: { [s: string]: FormatData; }): string => {
+const updatedCollumn = (columns: FormatData): string => {
   const setCollumn = Object.keys(columns).map((collumn) => `${collumn} = '${columns[collumn]}'`).join(', ');
   return setCollumn;
 }
@@ -62,7 +62,7 @@ export class RequestDTO {
     return req;
   }
 
-  generateRequestUpdate = (columns: { [s: string]: FormatData; }, where: string[]): string => {
+  generateRequestUpdate = (columns: FormatData, where: string[]): string => {
     const req = `UPDATE ${this.table} SET ${updatedCollumn(columns)} WHERE ${where[0]} = ${where[1]};`;
     console.log({ req });
     return req;

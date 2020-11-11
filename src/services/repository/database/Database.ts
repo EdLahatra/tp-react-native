@@ -10,7 +10,7 @@ import Tables from './tables';
 export const createFromLocation = `${RNFS.DocumentDirectoryPath}/mydbfile.sqlite`;
 
 export interface Database {
-  selectCounts(): Promise<{count: any; table: string;}[]>;
+  selectCounts(): Promise<{count: any; table: string; last?: string; first?: string;}[]>;
   insertSynchroOneToOne(reqSQL: string, values: string[]): Promise<any>;
   insertSynchroDownFileCSV(lines: number, name: string, size: string, date: number, numero_line: number): Promise<any>;
   updateSynchroDownFileCSV(name: string, fin: number, numero_line: number): Promise<any>;
@@ -101,7 +101,7 @@ async function updateTable(request: string, values: string[]) {
 }
 
 async function selectOneLasteValue(table: string, columns: string[], where: string[]): Promise<any> {
-	let WHERE = '';
+  let WHERE = '';
 	if(where && where.length > 1) {
 		WHERE = `WHERE ${where[0]} LIKE %${where[1]}%}`;
 	}
@@ -120,18 +120,44 @@ async function selectLastInsertFile(): Promise<{[s: string]: string}> {
   return file || {};
 }
 
+async function getFirstLast(db: SQLite.SQLiteDatabase, table: string) {
+  let last_first = {};
+  const max = await db.executeSql(`Select max(id), numero_ticket from ${table};`, []);
+  const min = await db.executeSql(`Select min(id), numero_ticket from ${table};`, []);
+  const last = max[0].rows.item(0).numero_ticket;
+  const first = min[0].rows.item(0).numero_ticket;
+  if(last) {
+    last_first = {
+      last,
+      first,
+    }
+  }
+  return last_first;
+}
+
 // Get an array of all the lists in the database
 async function selectCounts(): Promise<{
   count: any;
   table: string;
+  last?: string;
+  first?: string;
 }[]> {
   return getDatabase()
     .then(async (db) => {
       const promiseAll = Object.keys(Tables).map(async table => {
+        let last_first = {};
         const tbl = await db.executeSql(`SELECT COUNT(*) FROM ${table};`);
+        if (table === 'Tickets') {
+          last_first = await getFirstLast(db, table);
+        } else if(table === 'TicketsDetail') {
+          last_first = await getFirstLast(db, table);
+        } else if(table === 'TicketsPaiements') {
+          last_first = await getFirstLast(db, table);
+        }
         return {
           count: tbl[0].rows.item(0)['COUNT(*)'],
           table,
+          ...last_first,
         }
       });
       const res = await Promise.all(promiseAll);

@@ -1,27 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-    Text,
-  TouchableOpacity,StyleSheet
+  Text,
+  TouchableOpacity, StyleSheet
 } from "react-native";
 
-interface Props{
-    message:string,
-    onPress: () => void,
-    iscancel:boolean 
+interface Props {
+  message: string,
+  onPress: () => void,
+  iscancel?: boolean
 }
 
-const Button : React.FunctionComponent<Props> = function (props) {
-  const { message,onPress,iscancel } = props;
-  
-  return (
-    
-    
-         <TouchableOpacity style={iscancel? styles.container:styles.containerOk} onPress = {() => onPress()}>
-            <Text style={styles.txtstyle}>{message}</Text>
-         </TouchableOpacity>
-    
+const Button: React.FunctionComponent<Props> = function (props) {
+  const { message, onPress, iscancel } = props;
 
-  
+  return (
+    <TouchableOpacity style={iscancel ? styles.container : styles.containerOk} onPress={() => onPress()}>
+      <Text style={iscancel ? styles.txtstyle: styles.txtstyleOk}>{message}</Text>
+    </TouchableOpacity>
   );
 };
 
@@ -30,28 +25,36 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-   height:50,
-   borderRadius:5,
-   backgroundColor:'#787CC2'
-    
+    height: 50,
+    borderRadius: 5,
+    backgroundColor: 'white',
+    marginBottom: 5,
+    marginTop: 5,
   },
   containerOk: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-   height:50,
-   borderRadius:5,
-   backgroundColor:'#3928A6'
-    
+    height: 50,
+    borderRadius: 5,
+    backgroundColor: '#998C7E',
+    marginBottom: 5,
+    marginTop: 5,
   },
-  txtstyle:{
-      fontSize:18,
-      fontStyle:'normal',
-      fontWeight:'bold',
-      color:'white'
-      
-  }
- 
+  txtstyle: {
+    fontSize: 18,
+    fontStyle: 'normal',
+    fontWeight: 'bold',
+    color: '#E0C298'
+  },
+  txtstyleOk:{
+    fontSize:18,
+    fontStyle:'normal',
+    fontWeight:'bold',
+    color:'white'
+    
+}
+
 });
 
 export default Button;

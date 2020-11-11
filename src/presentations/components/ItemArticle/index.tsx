@@ -26,7 +26,7 @@ interface Props {
     <View style={styles.container}>
           <View style={styles.chp1}>
             <Text>{article.article_designation}</Text>
-            <Text>{article.article_code_article}</Text>
+           
           </View>
           <View style={styles.chp1}>
             <Text>{article.article_pv_ttc} {article.article_devise}</Text>
@@ -39,7 +39,7 @@ interface Props {
             <Image
                 
                 style={{height:20,width:20}}
-                source={ require("../../resources/images/ic_remove_circle.png") }
+                source={ require("../../resources/images/g_ic_remove_circle.png") }
                 >
                 
             </Image>
@@ -60,7 +60,7 @@ interface Props {
             <Image
                 
                 style={{height:20,width:20}}
-                source={ require("../../resources/images/ic_add_circle.png") }
+                source={ require("../../resources/images/g_ic_add_circle.png") }
                 >
                 
             </Image>
@@ -73,4 +73,3 @@ interface Props {
   );
 };
 export default ItemArticle;
-

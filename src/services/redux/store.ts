@@ -17,11 +17,19 @@ const persistConfig: PersistConfig<RootState> = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
+// export const store = createStore<any,any,any,any>(
+//   persistedReducer,
+//   compose(
+//     applyMiddleware(thunk as ThunkMiddleware<any, any>),
+//   )
+// );
+
 export const store = createStore<any,any,any,any>(
-  persistedReducer,
+  rootReducer,
   compose(
     applyMiddleware(thunk as ThunkMiddleware<any, any>),
   )
 );
+
 
 export const persistor = persistStore(store)

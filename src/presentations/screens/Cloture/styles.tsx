@@ -8,6 +8,7 @@ import { Dimensions, ViewStyle,  } from 'react-native';
 export default {
   container: {
     flex: 1,
+    backgroundColor: 'white'
   },
   cameraView: {
     height: Dimensions.get('window').height / 2,
@@ -22,6 +23,7 @@ export default {
     flexDirection: 'column',
     flexWrap: 'nowrap',
     flex: 1,
+    backgroundColor: 'white'
   },
   preview: {
     backgroundColor: 'transparent',

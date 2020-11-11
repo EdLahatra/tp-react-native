@@ -10,16 +10,18 @@ import {
 import { TextInput } from "react-native-gesture-handler";
 interface Props{
     message:string | any,
+    title: string,
     cancelButton:string,
     okButton:string,
     okAction:(value:string) => void;
     modalVisible: boolean,
+    error:string
     
     setModalVisible:(isok:boolean) => void
 }
 
 const PopupWithTextInput : React.FunctionComponent<Props> = function (props) {
-  const { message ,modalVisible,setModalVisible,cancelButton,okButton,okAction, children } = props;
+  const { message ,modalVisible,setModalVisible,cancelButton,okButton,okAction, children, title, error } = props;
   const [valueMotif,setValueMotif] = useState('');
   const [isMotif,setIsMotif] = useState(true);
  function getValueMotif(value:string){
@@ -38,7 +40,7 @@ const PopupWithTextInput : React.FunctionComponent<Props> = function (props) {
           <View style={styles.modalView}>
             <View>{children}</View>
             <Text style={styles.modalText}>{message}</Text>
-            <Text style={{alignSelf:'flex-start'}}>Motif</Text>
+            <Text style={{alignSelf:'flex-start',fontSize:10}}>{title}</Text>
             <View style={{flexDirection:'row',marginTop:10,marginBottom:5}}>
             <TextInput
            style={styles.passwordinput}
@@ -52,18 +54,18 @@ const PopupWithTextInput : React.FunctionComponent<Props> = function (props) {
             
             returnKeyType='go'
             placeholder=''></TextInput></View>
-            {!isMotif ? <Text style={{color:'red',fontSize:11,alignSelf:'flex-start',marginBottom:10}}>Vous devez ajouter un motif d'annulation</Text> : null}
-            <View style={{flexDirection:'row'}}>
+            {!isMotif ? <Text style={{color:'red',fontSize:11,alignSelf:'flex-start',marginBottom:10}}>{error}</Text> : null}
+            <View style={{flexDirection:'row', marginTop:10}}>
             
                 <TouchableHighlight
-                    style={{ ...styles.openButton, backgroundColor: "#787CC2", flex: 1, marginEnd: 8 }}
+                    style={{ ...styles.openButton, backgroundColor: "#FFFFFF", flex: 1, marginEnd: 8 }}
                     onPress={() => {
                         setModalVisible(!modalVisible);
                     } }>
                     <Text style={styles.textStyle}>{cancelButton}</Text>
                 </TouchableHighlight>
                 <TouchableHighlight
-                    style={{ ...styles.openButton, backgroundColor: "#3928A6", flex: 1, marginStart: 8 }}
+                    style={{ ...styles.openButton, backgroundColor: "#998C7E", flex: 1, marginStart: 8 }}
                     onPress={() => { 
                         if(valueMotif != '')
                         {
@@ -73,7 +75,7 @@ const PopupWithTextInput : React.FunctionComponent<Props> = function (props) {
                         }
                        
                     } }>
-                        <Text style={styles.textStyle}>{okButton}</Text>
+                        <Text style={styles.textStyleOK}>{okButton}</Text>
                 </TouchableHighlight>
             </View>
           
@@ -95,7 +97,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(68, 75, 84, 0.9)',
   },
   passwordinput:{ 
-    backgroundColor: '#F5F5FF' ,
+    backgroundColor: '#F2F2F2' ,
     borderRadius: 5,
     height:44,flex:1
     
@@ -122,13 +124,20 @@ const styles = StyleSheet.create({
     elevation: 2
   },
   textStyle: {
-    color: "white",
+    color: "#E0C298",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  textStyleOK: {
+    color: "#FFFFFF",
     fontWeight: "bold",
     textAlign: "center"
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center"
+    textAlign: "center",
+    fontSize:16,
+    color:'#000000'
   }
 });
 

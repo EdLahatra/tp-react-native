@@ -15,6 +15,7 @@ export const temp = `${RNFS.CachesDirectoryPath}/temp`;
 export const fileN = {
   reglements: 'reglements3.csv',
   utilisateurs: 'utilisateurs3.csv',
+  utilisateurs4: 'utilisateurs4.csv',
   clients: 'clients3.csv',
   articles: 'articles3.csv',
   codesbarres: 'codesbarres.csv',
@@ -174,7 +175,7 @@ export const ckeckFile = async (filename: string, path: string) => {
       transform: transformString.ModesReglements,
     };
   }
-  if (file === fileN.utilisateurs) {
+  if (file === fileN.utilisateurs || file === fileN.utilisateurs4) {
     return {
       path,
       name: 'Utilisateurs',
@@ -193,23 +194,6 @@ export const checkSynchroDown = async (code_mag: string, numero_caisse: string, 
   const check = await post(dataCheck(code_mag, numero_caisse, cle_serveur));
   return check;
 }
-
-export const getFileToString = async (csvFilePath: string) => {
-  let data = ''
-  const stream = await RNFetchBlob.fs.readStream(csvFilePath, "utf8", -1, 100);
-  stream.open();
-  stream.onData(async (chunk: any) => {
-    await console.log('chunk ==========+>', chunk);
-    setTimeout(() => { data += chunk }, 150);
-  })
-  stream.onEnd(() => {
-    console.log('================================+> data', data);
-    // if(data) {
-    return data;
-    // }
-  });
-  stream.onError(() => '');
-};
 
 export const getFileToStringOld = async (csvFilePath: string) => {
   try {
@@ -246,7 +230,7 @@ export const readDirAndCopy = async (pathFile: string, folder: string) => {
       if (isFile) {
         const dest = `${temp}/${folder}_${name}`;
         await RNFS.moveFile(path, dest);
-        return;
+        return dest;
       }
       await RNFS.unlink(path);
       return null
@@ -274,7 +258,8 @@ export const unzipFile = async (name: string) => {
   const files = await readDirAndCopy(zipFiles, name);
   if (files) {
     await RNFS.unlink(sourcePath);
-    return zipFiles;
+    // return zipFiles;
+    return files;
   }
 
   return null;
@@ -326,17 +311,13 @@ export const synchroOneToOne = async (file: string) => {
 
   const nameLastFile = file && typeof file === 'string' && file.length > 10 ? file : 'no%20file';
   const filename = await postApi(nameLastFile);
-  console.log({ filename });
   if (filename && filename.data && filename.data !== 'no update') {
     const nameFile = filename.data;
     const zipFile = await getZipFile(nameFile);
     if (zipFile) {
       const unZip = await unzipFile(nameFile);
-      console.log('unzipFile ===========+>');
-      console.log({ unZip });
-      if (unZip) {
-        const files = await ckeckCSVName(unZip);
-        console.log({ files });
+      if (unZip && unZip.length > 0) {
+        const files = await ckeckCSVName(temp);
         if (files && files.length > 0) {
           return {
             files,

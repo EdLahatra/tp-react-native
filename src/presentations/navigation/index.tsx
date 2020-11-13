@@ -1,5 +1,5 @@
 import './GestureHandler';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import UserInactivity from 'react-native-user-inactivity';
@@ -39,15 +39,36 @@ import {
 import TpeScreen from '../screens/Tpe';
 import { Keyboard } from '../components/Keyboard';
 
+import Realm from 'realm';
+
+// import { connectRealm } from 'react-native-realm';
+
 import { useAppSynchroDown } from '../../services/applicatif/synchroDown';
 import { ClientI } from '../../interfaces';
 import { initialUser } from '../../data/config';
 import { Tickets } from '../../interfaces/tickets';
 import { readStream } from './RNFetchBlobReadStream';
+import { useMetiersApp } from '../../services/metiers';
+
 
 let appState: AppStateStatus;
 
 // YellowBox.ignoreWarnings(['Setting a timer']);
+
+class RepositoryShema {
+  static shema = {
+    name: 'Repository',
+    primaryKey: 'id',
+    properties: {
+      id: { type: 'int', indexed: true },
+      name: 'string',
+      fullName: 'string',
+      description: 'string',
+      stars: 'int',
+      forks: 'int',
+    },
+  }
+}
 
 export const checkModulo = (n: number) => n % 51 === 0
 
@@ -56,49 +77,74 @@ export const AppScreen: React.FunctionComponent<IProps> = function (props) {
 
   // Initialize state
 
-  // const { insertSynchroOneToOne, insertSynchroDownFileCSV, getInsertSynchroDownFileCSV, updateSynchroDownFileCSV } = useMetiersApp();
-  const { goToSynchroDown, goToSynchroDownNew } = useAppSynchroDown();
+  const { selectCounts } = useMetiersApp();
+  const { goToSynchroDownNew } = useAppSynchroDown();
 
   appState = AppState.currentState;
+
+  const [data, setData] = useState<string[]>([]);
+  const [realm, setRealm] = useState(null);
+  const [go, setGo] = useState(true);
 
   // Set up a callback to fire when AppState changes (when the app goes to/from the background)
   useEffect(function () {
     // The app is currently active, so the 'change' event will not fire and we need to
     // call appIsNowRunningInForeground ourselves.
     console.log('Call goToSynchroDown()=============++>', appState);
+    // console.log(Realm.open);
+
+    //  Realm.open({ schema: [RepositoryShema.shema] })
+		// 	.then((rm) => {
+    //     console.log('realm ===================>', rm);
+		// 		setRealm(rm);
+		// 	})
+		// 	.catch(() => {});
+
     initialState();
     // 20200923_110249_hap
-    goToSynchroDownNew('20200812_163412_hap');
-    // goToSynchroDownNew(undefined);
+    // goToSynchroDownNew('20200812_163412_hap');
+    goToSynchroDownNew(undefined);
     appState = 'active';
     // Listen for app state changes
     // AppState.addEventListener('change', handleAppStateChange);
     // ToastModule.addEventListener('data', (res: any) => console.log(res));
+
     return function () {
       // Cleanup function
       // AppState.removeEventListener('change', handleAppStateChange);
     };
   }, []);
 
+  useEffect(function () {
+    // go && recursiveInsert();
+  }, [data]);
+
   async function initialState() {
-    console.log('message  =================++>');
+    const count = await selectCounts();
+    console.log('message  =================++>', count);
     // csvTocsv();
     
-    // const ifstream = await readStream('csvFilePath', 'utf8');
+    // const ifstream = await readStream(
+    //   'path',
+    //   async (line: string) => await insertData(line, 'transform'),
+    //   async () => {}
+    // );
     // ifstream.open();
-    // ifstream.onData(async (chunk: string) => {
-    //   console.log('================================+ chunk chunk ================================+', chunk);
-    // });
+  }
 
-    // ifstream.onError((err: any) => {
-    //   console.log('================================+ err err ================================+', err);
-    //   return 0;
-    // });
+  async function insertData(line: string, transform: any) {
+    setData(data.concat(line));
+    console.log(data.length);
+  }
 
-    // ifstream.onEnd(async () => {
-    //   console.log('================================+ onEnd onEnd ================================+');
-    // });
-    // console.log('================================+ FIN ================================+');
+  async function recursiveInsert() {
+    setGo(false);
+    if(data.length > 0){
+      setData(data.splice(1));
+      console.log('=================++> realm  =================++>', realm);
+      await recursiveInsert();
+    }
+    setGo(true);
   }
 
   // const navigation = useNavigation();
@@ -108,7 +154,7 @@ export const AppScreen: React.FunctionComponent<IProps> = function (props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <UserInactivity
+      {/* <UserInactivity
         isActive={isLogin}
         timeForInactivity={Number(timer) * 1000 * 60}
         // timeForInactivity={this.TIMER}
@@ -118,10 +164,10 @@ export const AppScreen: React.FunctionComponent<IProps> = function (props) {
           // !isActive && navigation.navigate('Login');
         }}
         style={{ flex: 1 }}
-      >
+      > */}
         {isLogin ? <Navigation /> : <Users />}
         {/* <Users /> */}
-      </UserInactivity>
+      {/* </UserInactivity> */}
     </SafeAreaView>
   );
 }
@@ -219,5 +265,20 @@ export const Users: React.FunctionComponent = function () {
     </NavigationContainer>
   );
 }
+
+// export default connectRealm(MyComponent, {
+//   schemas: ['Person'],
+//   mapToProps(results, realm, ownProps) {
+//     // the object that is returned from the mapToProps function
+//     // will be merged into the components props
+//     return {
+//       realm,
+//       // property on the results argument is the camel-cased and
+//       // pluralized version of the schema name, so...
+//       // instead of person being the property we get people
+//       people: results.people,
+//     };
+//   },
+// });
 
 export const AppNavigation = reduxConnect(AppScreen);

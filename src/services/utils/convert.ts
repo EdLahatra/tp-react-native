@@ -224,7 +224,12 @@ export const toClients = (cols: any) => {
 //   sexe: cols[58],
 // });
 
-export const toArticle = (cols: any) => cols && cols.length > 17 ? ({ requete: insertArticle, values: cols }) : {};
+export const toArticle = (cols: any) => {
+  if(cols && cols.length === 20) {
+    return ({ requete: insertArticle, values: cols })
+  }
+  return {};
+}
 
 // ({
 //   a_horo_modification: cols[0],

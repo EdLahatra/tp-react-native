@@ -30,12 +30,16 @@ async function insertSynchroOneToOne(reqSQL: string, values: string[]) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(reqSQL, values, (tx1, results) => {
-        // console.log({ tx1, results })
+        // console.log({ results });
         resolve(results);
+      }, (error) => {
+        // console.log({ error });
+        reject(error);
       });
     });
   });
 }
+
 // WHERE item_id = 
 async function selectTable(sqlRequest: string): Promise<any[]> {
   const db = await getDatabase();

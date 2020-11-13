@@ -36,6 +36,7 @@ public class MainApplication extends Application implements ReactApplication {
             //packages.add(new RNDataWedgeIntentsPackage());
           // packages.add(new SplashScreenReactPackage());
             packages.add(new MyPackage());
+            // packages.add(new RealmReactPackage());
           return packages;
         }
 
